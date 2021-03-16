@@ -5,6 +5,7 @@
       width="400"
       trigger="click"
     >
+    <p>FIRST TEST</p>
       <el-table
         :data="getRecordNotification"
         :highlight-current-row="true"
