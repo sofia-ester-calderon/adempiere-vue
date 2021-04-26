@@ -1,4 +1,4 @@
-const { camelizeObjectKeys, renameObjectKey } = require("@/utils/ADempiere/camelize")
+const { camelizeObjectKeys, renameObjectKey } = require("@/utils/ADempiere/transformObject")
 const { uuids } = require("../../uuids")
 
 

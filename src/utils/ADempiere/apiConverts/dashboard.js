@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { camelizeObjectKeys, renameObjectKey } from '../camelize.js'
+import { camelizeObjectKeys, renameObjectKey } from '../transformObject.js'
 
 export function convertRecentItemsList(recentItemsList) {
   camelizeObjectKeys(recentItemsList)
