@@ -1,5 +1,5 @@
 const { camelizeObjectKeys, renameObjectKey } = require("@/utils/ADempiere/transformObject")
-const { uuids } = require("../../uuids")
+const { uuids } = require("../../randomValues")
 
 
 describe('given an object is camelized', () => {

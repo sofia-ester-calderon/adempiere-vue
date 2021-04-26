@@ -1,4 +1,4 @@
-import { uuids } from '../../../uuids';
+import { uuids } from '../../../randomValues';
 import { convertRecentItemsList, convertFavorite, convertDashboard, convertPendingDocument } from '../../../../../src/utils/ADempiere/apiConverts/dashboard';
 
 const recentItemsListToConvert = {
