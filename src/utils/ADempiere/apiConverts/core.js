@@ -64,20 +64,6 @@ export function convertMessageText(messageTextToConvert) {
   }
 }
 
-export function convertCriteria(criteriaToConvert) {
-  return {
-    tableName: criteriaToConvert.table_name,
-    query: criteriaToConvert.query,
-    whereClause: criteriaToConvert.where_clause,
-    orderByClause: criteriaToConvert.order_by_clause,
-    referenceUuid: criteriaToConvert.reference_uuid,
-    // conditionsList: criteriaToConvert.conditions,
-    valuesList: criteriaToConvert.values,
-    orderByColumnList: criteriaToConvert.order_by_columns,
-    limit: criteriaToConvert.limit
-  }
-}
-
 export function convertOrganization(organization) {
   const { id, uuid, name, description } = organization
 

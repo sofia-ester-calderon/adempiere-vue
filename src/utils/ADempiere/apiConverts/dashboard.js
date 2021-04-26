@@ -14,49 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { camelizeObjectEntries } from '../camelize.js'
-import { convertCriteria } from './core.js'
+import { camelizeObjectKeys, renameObjectKey } from '../camelize.js'
 
 export function convertRecentItemsList(recentItemsList) {
-  camelizeObjectEntries(recentItemsList)
-  recentItemsList.records.forEach(record => camelizeObjectEntries(record))
-  recentItemsList.recentItemsList = recentItemsList.records
-  delete recentItemsList['records']
+  camelizeObjectKeys(recentItemsList)
+  recentItemsList.records.forEach(record => camelizeObjectKeys(record))
+  renameObjectKey(recentItemsList, 'records', 'recentItemsList')
   return recentItemsList
 }
 
 export function convertFavorite(favorite) {
-  camelizeObjectEntries(favorite)
+  camelizeObjectKeys(favorite)
   return favorite
 }
 
 export function convertDashboard(dashboard) {
-  camelizeObjectEntries(dashboard)
+  camelizeObjectKeys(dashboard)
   return dashboard
 }
 
-export function convertPendingDocument(pendingDocumentToConvert) {
-  const conv = {
-    windowUuid: pendingDocumentToConvert.window_uuid,
-    formUuid: pendingDocumentToConvert.form_uuid,
-    documentName: pendingDocumentToConvert.document_name,
-    documentDescription: pendingDocumentToConvert.document_description,
-    sequence: pendingDocumentToConvert.sequence,
-    recordCount: pendingDocumentToConvert.record_count,
-    criteria: convertCriteria(
-      pendingDocumentToConvert.criteria
-    )
-  }
-  console.log(conv.criteria)
-  return {
-    windowUuid: pendingDocumentToConvert.window_uuid,
-    formUuid: pendingDocumentToConvert.form_uuid,
-    documentName: pendingDocumentToConvert.document_name,
-    documentDescription: pendingDocumentToConvert.document_description,
-    sequence: pendingDocumentToConvert.sequence,
-    recordCount: pendingDocumentToConvert.record_count,
-    criteria: convertCriteria(
-      pendingDocumentToConvert.criteria
-    )
-  }
+export function convertPendingDocument(pendingDocument) {
+  camelizeObjectKeys(pendingDocument)
+  camelizeObjectKeys(pendingDocument.criteria)
+  renameObjectKey(pendingDocument.criteria, 'values', 'valuesList')
+  renameObjectKey(pendingDocument.criteria, 'orderByColumns', 'orderByColumnList')
+  return pendingDocument
 }
