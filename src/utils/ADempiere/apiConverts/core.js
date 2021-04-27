@@ -15,92 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { isEmptyValue } from '../valueUtils'
-import { camelizeObjectKeys } from '../transformObject'
+import { camelizeObjectKeys, renameObjectKey } from '../transformObject'
 
 export function convertContextInfo(contextInfo) {
   if (!contextInfo) {
-    return {
-      messageText: {}
-    }
+    return { messageText: {}}
   }
   camelizeObjectKeys(contextInfo)
-  contextInfo.messageText = convertMessageText(contextInfo.messageText)
+  const messageText = contextInfo.messageText ? camelizeObjectKeys(contextInfo.messageText) : {}
+  contextInfo.messageText = messageText
   return contextInfo
 }
 
-export function convertMessageText(messageTextToConvert) {
-  if (!messageTextToConvert) {
-    return {}
-  }
-  camelizeObjectKeys(messageTextToConvert)
-  return messageTextToConvert
-}
-
 export function convertOrganization(organization) {
-  const { id, uuid, name, description } = organization
-
-  return {
-    id,
-    uuid,
-    name,
-    description,
-    isReadOnly: organization.is_read_only,
-    duns: organization.duns,
-    taxId: organization.tax_id,
-    phone: organization.phone,
-    phone2: organization.phone2,
-    fax: organization.fax,
-    corporateBrandingImage: organization.corporate_branding_image
-  }
+  return camelizeObjectKeys(organization)
 }
 
-export function convertLanguage(languageToConvert) {
-  return {
-    language: languageToConvert.language,
-    languageName: languageToConvert.language_name,
-    languageISO: languageToConvert.language_iso,
-    countryCode: languageToConvert.country_code,
-    isBaseLanguage: languageToConvert.is_base_language,
-    isSystemLanguage: languageToConvert.is_system_language,
-    isDecimalPoint: languageToConvert.is_decimal_point,
-    datePattern: languageToConvert.date_pattern,
-    timePattern: languageToConvert.time_pattern
-  }
+export function convertLanguage(language) {
+  camelizeObjectKeys(language)
+  renameObjectKey(language, 'languageIso', 'languageISO')
+  return language
 }
 
-export function convertCountry(countryToConvert) {
-  const { id, uuid, name, description } = countryToConvert
-
-  return {
-    id,
-    uuid,
-    countryCode: countryToConvert.country_code,
-    name,
-    description,
-    hasRegion: countryToConvert.has_region,
-    regionName: countryToConvert.region_name,
-    displaySequence: countryToConvert.display_sequence,
-    isAddressLinesReverse: countryToConvert.is_address_lines_reverse,
-    captureSequence: countryToConvert.capture_sequence,
-    displaySequenceLocal: countryToConvert.display_sequence_local,
-    isAddressLinesLocalReverse: countryToConvert.is_address_lines_local_reverse,
-    expressionPostal: countryToConvert.expression_postal,
-    hasPostalAdd: countryToConvert.has_postal_add,
-    expressionPhone: countryToConvert.expression_phone,
-    mediaSize: countryToConvert.media_size,
-    expressionBankRoutingNo: countryToConvert.expression_bank_routing_no,
-    expressionBankAccountNo: countryToConvert.expression_bank_account_no,
-    language: countryToConvert.language,
-    allowCitiesOutOfList: countryToConvert.allow_cities_out_of_list,
-    isPostcodeLookup: countryToConvert.is_post_code_lookup,
-    currency: convertCurrency(
-      countryToConvert.currency
-    )
-  }
+export function convertCountry(country) {
+  camelizeObjectKeys(country)
+  renameObjectKey(country, 'isPostCodeLookup', 'isPostcodeLookup')
+  country.currency = convertCurrency(country.currency)
+  return country
 }
 
-export function convertCurrency(currencyToConvert) {
-  if (isEmptyValue(currencyToConvert)) {
+function convertCurrency(currency) {
+  if (isEmptyValue(currency)) {
     return {
       id: 0,
       uuid: '',
@@ -111,31 +56,14 @@ export function convertCurrency(currencyToConvert) {
       costingPrecision: 0
     }
   }
-  return {
-    id: currencyToConvert.id,
-    uuid: currencyToConvert.uuid,
-    iSOCode: currencyToConvert.iso_code,
-    curSymbol: currencyToConvert.currency_symbol,
-    description: currencyToConvert.description,
-    standardPrecision: currencyToConvert.standard_precision,
-    costingPrecision: currencyToConvert.costing_precision
-  }
+  camelizeObjectKeys(currency)
+  renameObjectKey(currency, 'isoCode', 'iSOCode')
+  renameObjectKey(currency, 'currencySymbol', 'curSymbol')
+  return currency
 }
 
-export function convertBusinessPartner(businessPartnerToConvert) {
-  const { id, uuid, name, description } = businessPartnerToConvert
-
-  return {
-    uuid,
-    id,
-    value: businessPartnerToConvert.value,
-    taxId: businessPartnerToConvert.tax_id,
-    duns: businessPartnerToConvert.duns,
-    naics: businessPartnerToConvert.naics,
-    name,
-    lastName: businessPartnerToConvert.last_name,
-    description
-  }
+export function convertBusinessPartner(businessPartner) {
+  return camelizeObjectKeys(businessPartner)
 }
 
 export function convertConversionRate(conversionRateToConvert) {

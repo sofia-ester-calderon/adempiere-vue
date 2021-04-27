@@ -6,6 +6,7 @@ export function camelizeObjectKeys(obj) {
       delete obj[k]
     }
   })
+  return obj
 }
 export function renameObjectKey(obj, oldEntry, newEntry) {
   delete Object.assign(obj, { [newEntry]: obj[oldEntry] })[oldEntry]

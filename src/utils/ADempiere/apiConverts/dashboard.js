@@ -24,13 +24,11 @@ export function convertRecentItemsList(recentItemsList) {
 }
 
 export function convertFavorite(favorite) {
-  camelizeObjectKeys(favorite)
-  return favorite
+  return camelizeObjectKeys(favorite)
 }
 
 export function convertDashboard(dashboard) {
-  camelizeObjectKeys(dashboard)
-  return dashboard
+  return camelizeObjectKeys(dashboard)
 }
 
 export function convertPendingDocument(pendingDocument) {
