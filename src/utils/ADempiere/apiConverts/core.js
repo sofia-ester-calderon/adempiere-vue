@@ -15,53 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { isEmptyValue } from '../valueUtils'
+import { camelizeObjectKeys } from '../transformObject'
 
-export function convertContextInfo(contextInfoToConvert) {
-  if (contextInfoToConvert) {
+export function convertContextInfo(contextInfo) {
+  if (!contextInfo) {
     return {
-      id: contextInfoToConvert.id,
-      uuid: contextInfoToConvert.uuid,
-      name: contextInfoToConvert.name,
-      description: contextInfoToConvert.description,
-      sqlStatement: contextInfoToConvert.sql_statement,
-      isActive: contextInfoToConvert.is_active,
-      messageText: convertMessageText(
-        contextInfoToConvert.message_text
-      )
+      messageText: {}
     }
   }
-  return {
-    id: undefined,
-    uuid: undefined,
-    name: undefined,
-    description: undefined,
-    sqlStatement: undefined,
-    isActive: undefined,
-    messageText: convertMessageText(undefined)
-  }
+  camelizeObjectKeys(contextInfo)
+  contextInfo.messageText = convertMessageText(contextInfo.messageText)
+  return contextInfo
 }
 
 export function convertMessageText(messageTextToConvert) {
-  if (messageTextToConvert) {
-    return {
-      id: messageTextToConvert.id,
-      // uuid: messageText.uuid,
-      value: messageTextToConvert.value,
-      messageType: messageTextToConvert.message_type,
-      messageText: messageTextToConvert.message_text,
-      messageTip: messageTextToConvert.message_tip,
-      isActive: messageTextToConvert.is_active
-    }
+  if (!messageTextToConvert) {
+    return {}
   }
-  return {
-    id: undefined,
-    uuid: undefined,
-    value: undefined,
-    messageType: undefined,
-    messageText: undefined,
-    messageTip: undefined,
-    isActive: undefined
-  }
+  camelizeObjectKeys(messageTextToConvert)
+  return messageTextToConvert
 }
 
 export function convertOrganization(organization) {

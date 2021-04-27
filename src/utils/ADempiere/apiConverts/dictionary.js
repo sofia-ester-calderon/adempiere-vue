@@ -19,24 +19,12 @@ import {
   convertFieldGroup
 } from '@/utils/ADempiere/apiConverts/field.js'
 import { convertContextInfo } from '@/utils/ADempiere/apiConverts/core.js'
+import { camelizeObjectKeys } from '../transformObject'
 
-export function convertProcess(processToConvert) {
-  return {
-    accessLevel: processToConvert.access_level,
-    description: processToConvert.description,
-    help: processToConvert.help,
-    id: processToConvert.id,
-    isActive: processToConvert.is_active,
-    isDirectPrint: processToConvert.is_direct_print,
-    isReport: processToConvert.is_report,
-    name: processToConvert.name,
-    parameters: processToConvert.parameters.map(parameter => {
-      return convertField(parameter)
-    }),
-    reportExportTypes: processToConvert.report_export_types, // no convert content
-    showHelp: processToConvert.show_help,
-    uuid: processToConvert.uuid
-  }
+export function convertProcess(process) {
+  camelizeObjectKeys(process)
+  process.parameters = process.parameters.map(parameter => convertField(parameter))
+  return process
 }
 
 // Convert report export type
@@ -110,6 +98,7 @@ export function convertWindow(windowToConvert) {
     isActive: windowToConvert.is_active,
     isSalesTransaction: windowToConvert.is_sales_transaction,
     windowType: windowToConvert.window_type,
+    // TODO: change
     contextInfo: convertContextInfo(
       windowToConvert.context_info
     ),
