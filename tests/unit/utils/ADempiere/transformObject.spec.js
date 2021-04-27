@@ -1,16 +1,14 @@
 const { camelizeObjectKeys, renameObjectKey } = require("@/utils/ADempiere/transformObject")
-const { uuids } = require("../../randomValues")
-
 
 describe('given an object is camelized', () => {
     it('should camelize all snake case object entries', () => {
         const obj = {
-            "menu_uuid": uuids[0],
+            "menu_uuid": "95326d2a-a67b-11eb-bcbc-0242ac130002",
             "menu_name": "Menu Name",
         }
         camelizeObjectKeys(obj)
     
-        expect(obj.menuUuid).toBe(uuids[0])
+        expect(obj.menuUuid).toBe("95326d2a-a67b-11eb-bcbc-0242ac130002")
         expect(obj.menuName).toBe('Menu Name')
         expect(obj.menu_uuid).toBeUndefined()
         expect(obj.menu_name).toBeUndefined()
