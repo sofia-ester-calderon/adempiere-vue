@@ -22,9 +22,9 @@ import { convertContextInfo } from '@/utils/ADempiere/apiConverts/core.js'
 import { camelizeObjectKeys } from '../transformObject'
 
 export function convertProcess(process) {
-  camelizeObjectKeys(process)
-  process.parameters = process.parameters.map(parameter => convertField(parameter))
-  return process
+  const convertedProcess = camelizeObjectKeys(process)
+  convertedProcess.parameters = process.parameters.map(parameter => convertField(parameter))
+  return convertedProcess
 }
 
 // Convert report export type

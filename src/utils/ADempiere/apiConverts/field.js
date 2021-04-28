@@ -18,27 +18,27 @@ import { convertContextInfo } from '@/utils/ADempiere/apiConverts/core.js'
 import { camelizeObjectKeys, renameObjectKey } from '../transformObject'
 
 export function convertField(field) {
-  camelizeObjectKeys(field)
-  convertFieldGroup(field, 'Fieldgroup')
-  field.reference = convertReference(field.reference)
-  field.contextInfo = convertContextInfo(field.contextInfo)
-  renameObjectKey(field, 'Fielddefinition', 'fieldDefinition')
-  field.fieldDefinition = convertFieldDefinition(field.fieldDefinition)
-  field.valueMin = field.valueMax
-  renameObjectKey(field, 'columnSql', 'columnSQL')
-  renameObjectKey(field, 'isInfoOnly', 'isinfoOnly')
-  return field
+  const convertedField = camelizeObjectKeys(field)
+  convertedField.fieldGroup = convertFieldGroup(field.Fieldgroup)
+  delete convertedField['Fieldgroup']
+  convertedField.reference = convertReference(field.reference)
+  convertedField.contextInfo = convertContextInfo(field.context_info)
+  convertedField.fieldDefinition = convertFieldDefinition(field.Fielddefinition)
+  delete convertedField['Fielddefinition']
+  convertedField.valueMin = field.value_max
+  renameObjectKey(convertedField, 'columnSql', 'columnSQL')
+  renameObjectKey(convertedField, 'isInfoOnly', 'isinfoOnly')
+  return convertedField
 }
 
-export function convertFieldGroup(object, oldKeyName) {
-  if (!object[oldKeyName]) {
-    object.fieldGroup = {}
-    return
+export function convertFieldGroup(fieldGroup) {
+  if (!fieldGroup) {
+    return {}
   }
-  renameObjectKey(object, oldKeyName, 'fieldGroup')
-  camelizeObjectKeys(object.fieldGroup)
-  object.fieldGroup.groupName = object.fieldGroup.name
-  object.fieldGroup.groupType = object.fieldGroup.fieldGroupType
+  const convertedFieldGroup = camelizeObjectKeys(fieldGroup)
+  convertedFieldGroup.groupName = convertedFieldGroup.name
+  convertedFieldGroup.groupType = convertedFieldGroup.fieldGroupType
+  return convertedFieldGroup
 }
 
 export function convertReference(reference) {
@@ -47,28 +47,28 @@ export function convertReference(reference) {
       zoomWindows: []
     }
   }
-  camelizeObjectKeys(reference)
-  reference.zoomWindows = reference.zoomWindows.map(zoomWindowItem => convertZoomWindow(zoomWindowItem))
-  return reference
+  const convertedReference = camelizeObjectKeys(reference)
+  convertedReference.zoomWindows = reference.zoom_windows.map(zoomWindowItem => convertZoomWindow(zoomWindowItem))
+  return convertedReference
 }
 
 export function convertZoomWindow(zoomWindowToConvert) {
   if (!zoomWindowToConvert) {
     return {}
   }
-  camelizeObjectKeys(zoomWindowToConvert)
-  return zoomWindowToConvert
+  const convertedwindow = camelizeObjectKeys(zoomWindowToConvert)
+  return convertedwindow
 }
 
 export function convertFieldDefinition(fieldDefinition) {
   if (!fieldDefinition) {
     return { conditions: [] }
   }
-  camelizeObjectKeys(fieldDefinition)
-  renameObjectKey(fieldDefinition, 'Value', 'value')
-  fieldDefinition.conditions = fieldDefinition.conditions
+  const convertedDefinition = camelizeObjectKeys(fieldDefinition)
+  renameObjectKey(convertedDefinition, 'Value', 'value')
+  convertedDefinition.conditions = fieldDefinition.conditions
     .map(itemCondition => connvertFieldCondition(itemCondition))
-  return fieldDefinition
+  return convertedDefinition
 }
 
 export function connvertFieldCondition(fieldConditionToConvert) {

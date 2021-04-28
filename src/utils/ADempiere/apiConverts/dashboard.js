@@ -17,10 +17,10 @@
 import { camelizeObjectKeys, renameObjectKey } from '../transformObject.js'
 
 export function convertRecentItemsList(recentItemsList) {
-  camelizeObjectKeys(recentItemsList)
-  recentItemsList.records.forEach(record => camelizeObjectKeys(record))
-  renameObjectKey(recentItemsList, 'records', 'recentItemsList')
-  return recentItemsList
+  const convertedList = camelizeObjectKeys(recentItemsList)
+  convertedList.recentItemsList = recentItemsList.records.map(item => camelizeObjectKeys(item))
+  delete convertedList['records']
+  return convertedList
 }
 
 export function convertFavorite(favorite) {
@@ -32,9 +32,9 @@ export function convertDashboard(dashboard) {
 }
 
 export function convertPendingDocument(pendingDocument) {
-  camelizeObjectKeys(pendingDocument)
-  camelizeObjectKeys(pendingDocument.criteria)
-  renameObjectKey(pendingDocument.criteria, 'values', 'valuesList')
-  renameObjectKey(pendingDocument.criteria, 'orderByColumns', 'orderByColumnList')
-  return pendingDocument
+  const convertedDocument = camelizeObjectKeys(pendingDocument)
+  convertedDocument.criteria = camelizeObjectKeys(pendingDocument.criteria)
+  renameObjectKey(convertedDocument.criteria, 'values', 'valuesList')
+  renameObjectKey(convertedDocument.criteria, 'orderByColumns', 'orderByColumnList')
+  return convertedDocument
 }

@@ -1,12 +1,13 @@
 export function camelizeObjectKeys(obj) {
-  Object.keys(obj).forEach(k => {
+  const camelizedObj = Object.assign({}, obj)
+  Object.keys(camelizedObj).forEach(k => {
     const newK = k.replace(/(\_\w)/g, (m) => m[1].toUpperCase())
     if (newK !== k) {
-      obj[newK] = obj[k]
-      delete obj[k]
+      camelizedObj[newK] = camelizedObj[k]
+      delete camelizedObj[k]
     }
   })
-  return obj
+  return camelizedObj
 }
 export function renameObjectKey(obj, oldEntry, newEntry) {
   delete Object.assign(obj, { [newEntry]: obj[oldEntry] })[oldEntry]

@@ -6,12 +6,12 @@ describe('given an object is camelized', () => {
             "menu_uuid": "95326d2a-a67b-11eb-bcbc-0242ac130002",
             "menu_name": "Menu Name",
         }
-        camelizeObjectKeys(obj)
+        const convertedObj = camelizeObjectKeys(obj)
     
-        expect(obj.menuUuid).toBe("95326d2a-a67b-11eb-bcbc-0242ac130002")
-        expect(obj.menuName).toBe('Menu Name')
-        expect(obj.menu_uuid).toBeUndefined()
-        expect(obj.menu_name).toBeUndefined()
+        expect(convertedObj.menuUuid).toBe("95326d2a-a67b-11eb-bcbc-0242ac130002")
+        expect(convertedObj.menuName).toBe('Menu Name')
+        expect(convertedObj.menu_uuid).toBeUndefined()
+        expect(convertedObj.menu_name).toBeUndefined()
     })
     
     it('should ignore all entires that are not snake case', () => {
@@ -20,18 +20,18 @@ describe('given an object is camelized', () => {
             "menuItem": "Menu Item",
             "something": "else",
         }
-        camelizeObjectKeys(obj)
+        const convertedObj = camelizeObjectKeys(obj)
 
-        expect(obj.menuName).toBe('Menu Name')
-        expect(obj.menuItem).toBe("Menu Item")
-        expect(obj.something).toBe('else')
+        expect(convertedObj.menuName).toBe('Menu Name')
+        expect(convertedObj.menuItem).toBe("Menu Item")
+        expect(convertedObj.something).toBe('else')
     })
 
     it('should return empty object if object is empty', () => {
         const obj = {}
-        camelizeObjectKeys(obj)
+        const convertedObj = camelizeObjectKeys(obj)
 
-        expect(obj).toBeDefined()
+        expect(convertedObj).toBeDefined()
     })
 })
 

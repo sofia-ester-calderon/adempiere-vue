@@ -21,10 +21,10 @@ export function convertContextInfo(contextInfo) {
   if (!contextInfo) {
     return { messageText: {}}
   }
-  camelizeObjectKeys(contextInfo)
-  const messageText = contextInfo.messageText ? camelizeObjectKeys(contextInfo.messageText) : {}
-  contextInfo.messageText = messageText
-  return contextInfo
+  const convertedContextInfo = camelizeObjectKeys(contextInfo)
+  const messageText = contextInfo.message_text ? camelizeObjectKeys(contextInfo.message_text) : {}
+  convertedContextInfo.messageText = messageText
+  return convertedContextInfo
 }
 
 export function convertOrganization(organization) {
@@ -32,16 +32,16 @@ export function convertOrganization(organization) {
 }
 
 export function convertLanguage(language) {
-  camelizeObjectKeys(language)
-  renameObjectKey(language, 'languageIso', 'languageISO')
-  return language
+  const convertedLanguage = camelizeObjectKeys(language)
+  renameObjectKey(convertedLanguage, 'languageIso', 'languageISO')
+  return convertedLanguage
 }
 
 export function convertCountry(country) {
-  camelizeObjectKeys(country)
-  renameObjectKey(country, 'isPostCodeLookup', 'isPostcodeLookup')
-  country.currency = convertCurrency(country.currency)
-  return country
+  const convertedCountry = camelizeObjectKeys(country)
+  renameObjectKey(convertedCountry, 'isPostCodeLookup', 'isPostcodeLookup')
+  convertedCountry.currency = convertCurrency(country.currency)
+  return convertedCountry
 }
 
 function convertCurrency(currency) {
@@ -56,10 +56,10 @@ function convertCurrency(currency) {
       costingPrecision: 0
     }
   }
-  camelizeObjectKeys(currency)
-  renameObjectKey(currency, 'isoCode', 'iSOCode')
-  renameObjectKey(currency, 'currencySymbol', 'curSymbol')
-  return currency
+  const convertedCUrrency = camelizeObjectKeys(currency)
+  renameObjectKey(convertedCUrrency, 'isoCode', 'iSOCode')
+  renameObjectKey(convertedCUrrency, 'currencySymbol', 'curSymbol')
+  return convertedCUrrency
 }
 
 export function convertBusinessPartner(businessPartner) {
