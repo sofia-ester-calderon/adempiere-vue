@@ -1,8 +1,8 @@
 const { convertFieldGroup, convertField } = require("@/utils/ADempiere/apiConverts/field");
-import fieldGroup from "./objects/fieldGroup.json";
-import convertedFieldGroup from "./objects/fieldGroup_converted.json";
-import field from "./objects/field.json";
-import convertedField from "./objects/field_converted.json";
+import fieldGroup from "./objects/fromApi/fieldGroup.json";
+import convertedFieldGroup from "./objects/converted/fieldGroup.json";
+import field from "./objects/fromApi/field.json";
+import convertedField from "./objects/converted/field.json";
 
 describe("field group", () => {
   it("should return a converted field group object", () => {

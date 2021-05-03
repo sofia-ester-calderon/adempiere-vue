@@ -1,12 +1,12 @@
 import { convertRecentItemsList, convertFavorite, convertDashboard, convertPendingDocument } from '../../../../../src/utils/ADempiere/apiConverts/dashboard';
-import recentListItems from './objects/recentListItems.json'
-import convertedRecentListItems from './objects/recentListItems_converted.json'
-import favorite from './objects/favorite.json'
-import convertedFavorite from './objects/favorite_converted.json'
-import dashboard from './objects/dashboard.json'
-import convertedDashboard from './objects/dashboard_converted.json'
-import pendingDocument from './objects/pendingDocument.json'
-import convertedPendingDocument from './objects/pendingDocument_converted.json'
+import recentListItems from './objects/fromApi/recentListItems.json'
+import convertedRecentListItems from './objects/converted/recentListItems.json'
+import favorite from './objects/fromApi/favorite.json'
+import convertedFavorite from './objects/converted/favorite.json'
+import dashboard from './objects/fromApi/dashboard.json'
+import convertedDashboard from './objects/converted/dashboard.json'
+import pendingDocument from './objects/fromApi/pendingDocument.json'
+import convertedPendingDocument from './objects/converted/pendingDocument.json'
 
 it('should convert the recent item list', () => {
     const actualConvertedList = convertRecentItemsList(recentListItems)

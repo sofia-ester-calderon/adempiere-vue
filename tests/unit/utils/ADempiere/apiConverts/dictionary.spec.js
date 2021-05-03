@@ -7,22 +7,22 @@ import {
   convertValidationRule,
   convertWindow
 } from "../../../../../src/utils/ADempiere/apiConverts/dictionary";
-import process from "./objects/process.json";
-import convertedProcess from "./objects/process_converted.json";
-import processWithUndefined from "./objects/processWithUndefined.json";
-import convertedProcessWithUndefined from "./objects/processWithUndefined_converted.json";
-import reportExportType from "./objects/reportExportType.json";
-import convertedReportExportType from "./objects/reportExportType_converted.json";
-import tab from "./objects/tab.json";
-import convertedTab from "./objects/tab_converted.json";
-import windowObj from "./objects/window.json";
-import convertedWindow from "./objects/window_converted.json";
-import browser from "./objects/browser.json";
-import convertedBrowser from "./objects/browser_converted.json";
-import form from "./objects/form.json";
-import convertedForm from "./objects/form_converted.json";
-import validationRule from "./objects/validationRule.json";
-import convertedValidationRule from "./objects/validationRule_converted.json";
+import process from "./objects/fromApi/process.json";
+import convertedProcess from "./objects/converted/process.json";
+import processWithUndefined from "./objects/fromApi/processWithUndefined.json";
+import convertedProcessWithUndefined from "./objects/converted/processWithUndefined.json";
+import reportExportType from "./objects/fromApi/reportExportType.json";
+import convertedReportExportType from "./objects/converted/reportExportType.json";
+import tab from "./objects/fromApi/tab.json";
+import convertedTab from "./objects/converted/tab.json";
+import windowObj from "./objects/fromApi/window.json";
+import convertedWindow from "./objects/converted/window.json";
+import browser from "./objects/fromApi/browser.json";
+import convertedBrowser from "./objects/converted/browser.json";
+import form from "./objects/fromApi/form.json";
+import convertedForm from "./objects/converted/form.json";
+import validationRule from "./objects/fromApi/validationRule.json";
+import convertedValidationRule from "./objects/converted/validationRule.json";
 
 describe("process", () => {
   it("should convert a process with all fields defined", () => {
