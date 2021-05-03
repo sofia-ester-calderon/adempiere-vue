@@ -40,17 +40,8 @@ export function convertBrowser(browser) {
   return convertedBrowser
 }
 
-export function convertForm(formToConvert) {
-  return {
-    id: formToConvert.id,
-    uuid: formToConvert.uuid,
-    name: formToConvert.name,
-    description: formToConvert.description,
-    help: formToConvert.help,
-    accessLevel: formToConvert.access_level,
-    fileName: formToConvert.file_name,
-    isActive: formToConvert.is_active
-  }
+export function convertForm(form) {
+  return camelizeObjectKeys(form)
 }
 
 export function convertWindow(windowToConvert) {
@@ -71,13 +62,6 @@ export function convertTab(tab) {
 }
 
 //  Convert Validation Rule
-export function convertValidationRule(validationRuleToConvert) {
-  return {
-    id: validationRuleToConvert.id,
-    uuid: validationRuleToConvert.uuid,
-    name: validationRuleToConvert.name,
-    description: validationRuleToConvert.description,
-    validationCode: validationRuleToConvert.validation_code,
-    type: validationRuleToConvert.type
-  }
+export function convertValidationRule(validationRule) {
+  return camelizeObjectKeys(validationRule)
 }

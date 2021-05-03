@@ -1,8 +1,10 @@
 import {
   convertBrowser,
+  convertForm,
   convertProcess,
   convertReportExportType,
   convertTab,
+  convertValidationRule,
   convertWindow
 } from "../../../../../src/utils/ADempiere/apiConverts/dictionary";
 import process from "./objects/process.json";
@@ -17,6 +19,10 @@ import windowObj from "./objects/window.json";
 import convertedWindow from "./objects/window_converted.json";
 import browser from "./objects/browser.json";
 import convertedBrowser from "./objects/browser_converted.json";
+import form from "./objects/form.json";
+import convertedForm from "./objects/form_converted.json";
+import validationRule from "./objects/validationRule.json";
+import convertedValidationRule from "./objects/validationRule_converted.json";
 
 describe("process", () => {
   it("should convert a process with all fields defined", () => {
@@ -55,5 +61,19 @@ describe("browser", () => {
   it("should return a converted browser object", () => {
     const actualBrowser = convertBrowser(browser);
     expect(actualBrowser).toEqual(convertedBrowser);
+  });
+});
+
+describe("form", () => {
+  it("should return a converted form object", () => {
+    const actualForm = convertForm(form);
+    expect(actualForm).toEqual(convertedForm);
+  });
+});
+
+describe("validation rule", () => {
+  it("should return a converted validation rule object", () => {
+    const actualValidationRule = convertValidationRule(validationRule);
+    expect(actualValidationRule).toEqual(convertedValidationRule);
   });
 });
