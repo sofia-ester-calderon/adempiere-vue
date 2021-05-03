@@ -71,21 +71,9 @@ export function convertFieldDefinition(fieldDefinition) {
   return convertedDefinition
 }
 
-export function connvertFieldCondition(fieldConditionToConvert) {
-  if (fieldConditionToConvert) {
-    return {
-      id: fieldConditionToConvert.id,
-      uuid: fieldConditionToConvert.uuid,
-      condition: fieldConditionToConvert.condition,
-      styleSheet: fieldConditionToConvert.style_sheet,
-      isActive: fieldConditionToConvert.is_active
-    }
+function connvertFieldCondition(fieldConditionToConvert) {
+  if (!fieldConditionToConvert) {
+    return {}
   }
-  return {
-    id: undefined,
-    uuid: undefined,
-    condition: undefined,
-    stylesheet: undefined,
-    isActive: undefined
-  }
+  return camelizeObjectKeys(fieldConditionToConvert)
 }
