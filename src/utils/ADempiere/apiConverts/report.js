@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { camelizeObjectKeys, renameObjectKey } from '../transformObject'
+
 export function convertListPrintFormats(listPrintFormatsToConvert) {
   return {
     recordCount: listPrintFormatsToConvert.record_count,
@@ -37,30 +39,11 @@ export function convertPrintFormat(printFormatToConvert) {
   }
 }
 
-export function convertReportOutput(reportOutputToConvert) {
-  const { uuid, name, description } = reportOutputToConvert
-
-  return {
-    uuid,
-    name,
-    description,
-    fileName: reportOutputToConvert.file_name,
-    output: reportOutputToConvert.output,
-    mimeType: reportOutputToConvert.mime_type,
-    dataCols: reportOutputToConvert.data_cols,
-    dataRows: reportOutputToConvert.data_rows,
-    headerName: reportOutputToConvert.header_name,
-    footerName: reportOutputToConvert.footer_name,
-    printFormatUuid: reportOutputToConvert.print_format_uuid,
-    reportViewUuid: reportOutputToConvert.report_view_uuid,
-    tableName: reportOutputToConvert.table_name,
-    outputStream: reportOutputToConvert.output_stream,
-    // outputStreamAsB64
-    outputStream_asB64: reportOutputToConvert.output_stream_asB64,
-    // outputStreamAsU8
-    outputStream_asU8: reportOutputToConvert.output_stream_asU8,
-    reportType: reportOutputToConvert.report_type
-  }
+export function convertReportOutput(reportOutput) {
+  const convertedReportOutput = camelizeObjectKeys(reportOutput)
+  renameObjectKey(convertedReportOutput, 'outputStreamAsB64', 'outputStream_asB64')
+  renameObjectKey(convertedReportOutput, 'outputStreamAsU8', 'outputStream_asU8')
+  return convertedReportOutput
 }
 
 export function convertDrillTables(drillTablesToConvert) {
