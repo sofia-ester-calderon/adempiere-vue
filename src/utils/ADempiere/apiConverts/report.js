@@ -16,27 +16,14 @@
 
 import { camelizeObjectKeys, renameObjectKey } from '../transformObject'
 
-export function convertListPrintFormats(listPrintFormatsToConvert) {
-  return {
-    recordCount: listPrintFormatsToConvert.record_count,
-    records: listPrintFormatsToConvert.records.map(record => {
-      return convertPrintFormat(record)
-    }),
-    nextPageToken: listPrintFormatsToConvert.next_page_token
-  }
+export function convertListPrintFormats(printFormats) {
+  const convertedPrintFormats = camelizeObjectKeys(printFormats)
+  convertedPrintFormats.records = printFormats.records.map(record => convertPrintFormat(record))
+  return convertedPrintFormats
 }
 
-export function convertPrintFormat(printFormatToConvert) {
-  const { name, description } = printFormatToConvert
-
-  return {
-    name,
-    description,
-    tableName: printFormatToConvert.table_name,
-    isDefault: printFormatToConvert.is_default,
-    reportViewUuid: printFormatToConvert.report_view_uuid,
-    printFormatUuid: printFormatToConvert.print_format_uuid
-  }
+function convertPrintFormat(printFormat) {
+  return camelizeObjectKeys(printFormat)
 }
 
 export function convertReportOutput(reportOutput) {
@@ -46,21 +33,10 @@ export function convertReportOutput(reportOutput) {
   return convertedReportOutput
 }
 
-export function convertDrillTables(drillTablesToConvert) {
-  return {
-    tableName: drillTablesToConvert.table_name,
-    printName: drillTablesToConvert.print_name
-  }
+export function convertDrillTables(drillTables) {
+  return camelizeObjectKeys(drillTables)
 }
 
-export function convertReportView(reportViewToConvert) {
-  const { uuid, name, description } = reportViewToConvert
-
-  return {
-    uuid,
-    name,
-    description,
-    tableName: reportViewToConvert.table_name,
-    reportViewUuid: reportViewToConvert.report_view_uuid
-  }
+export function convertReportView(reportView) {
+  return camelizeObjectKeys(reportView)
 }
