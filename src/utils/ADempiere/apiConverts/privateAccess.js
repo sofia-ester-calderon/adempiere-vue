@@ -14,10 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-export function convertPrivateAccess(privateAccessToConvert) {
-  return {
-    tableName: privateAccessToConvert.table_name,
-    recordId: privateAccessToConvert.record_id,
-    recordUuid: privateAccessToConvert.record_uuid
-  }
+import { camelizeObjectKeys } from '../transformObject'
+
+export function convertPrivateAccess(privateAccess) {
+  return camelizeObjectKeys(privateAccess)
 }
