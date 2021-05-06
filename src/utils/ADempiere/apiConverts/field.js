@@ -27,7 +27,6 @@ export function convertField(field) {
   delete convertedField['Fielddefinition']
   convertedField.valueMin = field.value_max
   renameObjectKey(convertedField, 'columnSql', 'columnSQL')
-  renameObjectKey(convertedField, 'isInfoOnly', 'isinfoOnly')
   return convertedField
 }
 

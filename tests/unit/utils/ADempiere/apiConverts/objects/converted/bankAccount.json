@@ -16,7 +16,7 @@
   "bban": "bank account  bban",
   "iban": "bank account  iban",
   "creditLimit": "bank account  credit_limit",
-  "current_balance": "bank account  current_balance",
+  "currentBalance": "bank account  current_balance",
   "isDefault": "bank account  is_default",
   "businessPartner": {
     "uuid": "uuid",

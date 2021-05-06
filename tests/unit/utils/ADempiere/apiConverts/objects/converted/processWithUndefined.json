@@ -53,7 +53,7 @@
         "isReadOnly": false,
         "isQueryCriteria": true,
         "isOrderBy": false,
-        "isinfoOnly": true,
+        "isInfoOnly": true,
         "callout": "Process Parameter Callout",
         "displayLogic": "Process Parameter Display Logic",
         "mandatoryLogic": "Process Parameter Mandatory Logic",

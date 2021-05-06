@@ -89,7 +89,6 @@ export function convertBankAccount(bankAccount) {
   const convertedBankAccount = camelizeObjectKeys(bankAccount)
   convertedBankAccount.currency = convertCurrency(bankAccount.currency)
   convertedBankAccount.businessPartner = convertBusinessPartner(bankAccount.business_partner)
-  renameObjectKey(convertedBankAccount, 'currentBalance', 'current_balance')
   return convertedBankAccount
 }
 
@@ -116,7 +115,6 @@ export function convertProductPrice(productPrice) {
   convertedProductPrice.taxRate = convertTaxRate(productPrice.tax_rate)
   convertedProductPrice.product = convertProduct(productPrice.product)
   convertedProductPrice.schemaCurrency = convertCurrency(productPrice.schema_currency)
-  renameObjectKey(convertedProductPrice, 'validFrom', 'valid_from')
   return convertedProductPrice
 }
 
@@ -125,7 +123,5 @@ export function convertTaxRate(taxRate) {
 }
 
 export function convertProduct(product) {
-  const convertedProduct = camelizeObjectKeys(product)
-  renameObjectKey(convertedProduct, 'productClassificationName', 'productClassification_name')
-  return convertedProduct
+  return camelizeObjectKeys(product)
 }

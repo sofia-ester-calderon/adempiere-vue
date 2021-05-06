@@ -33,7 +33,7 @@
     "bban": "cash bank account  bban",
     "iban": "cash bank account  iban",
     "creditLimit": "cash bank account  credit_limit",
-    "current_balance": "cash bank account  current_balance",
+    "currentBalance": "cash bank account  current_balance",
     "isDefault": "cash bank account  is_default",
     "businessPartner": {
       "uuid": "uuid",
@@ -67,7 +67,7 @@
     "bban": "bank account  bban",
     "iban": "bank account  iban",
     "creditLimit": "bank account  credit_limit",
-    "current_balance": "bank account  current_balance",
+    "currentBalance": "bank account  current_balance",
     "isDefault": "bank account  is_default",
     "businessPartner": {
       "uuid": "uuid",
