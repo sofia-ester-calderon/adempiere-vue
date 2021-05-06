@@ -1,4 +1,4 @@
-import { convertRecentItemsList, convertFavorite, convertDashboard, convertPendingDocument } from '../../../../../src/utils/ADempiere/apiConverts/dashboard';
+import { convertRecentItemsList, convertFavorite, convertDashboard, convertPendingDocument } from '../../../../../src/utils/ADempiere/apiConverts/dashboard'
 import recentListItems from './objects/fromApi/recentListItems.json'
 import convertedRecentListItems from './objects/converted/recentListItems.json'
 import favorite from './objects/fromApi/favorite.json'
@@ -9,21 +9,21 @@ import pendingDocument from './objects/fromApi/pendingDocument.json'
 import convertedPendingDocument from './objects/converted/pendingDocument.json'
 
 it('should convert the recent item list', () => {
-    const actualConvertedList = convertRecentItemsList(recentListItems)
-    expect(actualConvertedList).toEqual(convertedRecentListItems)
+  const actualConvertedList = convertRecentItemsList(recentListItems)
+  expect(actualConvertedList).toEqual(convertedRecentListItems)
 })
 
- it('should convert the favorite', () => {
-     const actualFavorite = convertFavorite(favorite)
-     expect(actualFavorite).toEqual(convertedFavorite)
- })
+it('should convert the favorite', () => {
+  const actualFavorite = convertFavorite(favorite)
+  expect(actualFavorite).toEqual(convertedFavorite)
+})
 
- it('should convert dashboard', () => {
-    const actualDashbaord = convertDashboard(dashboard)
-    expect(actualDashbaord).toEqual(convertedDashboard)
- })
+it('should convert dashboard', () => {
+  const actualDashbaord = convertDashboard(dashboard)
+  expect(actualDashbaord).toEqual(convertedDashboard)
+})
 
- it('should convert a pending document', () => {
-     const actualPendingDocument = convertPendingDocument(pendingDocument)
-     expect(actualPendingDocument).toEqual(convertedPendingDocument)
- })
+it('should convert a pending document', () => {
+  const actualPendingDocument = convertPendingDocument(pendingDocument)
+  expect(actualPendingDocument).toEqual(convertedPendingDocument)
+})
