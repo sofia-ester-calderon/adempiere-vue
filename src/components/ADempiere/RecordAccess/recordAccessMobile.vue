@@ -1,86 +1,160 @@
 <template>
-  <el-card class="box-card">
-    <div slot="header" class="clearfix">
-      <span>
-        {{ $t('data.recordAccess.actions') }}
-      </span>
-    </div>
-    <div style="margin-bottom: 10%;">
-      <span style="margin-bottom: 10%;">
-        {{ $t('data.recordAccess.hideRecord') }}
-      </span>
-      <br>
-      <el-select
-        v-model="getterListExclude"
-        multiple
-        style="margin-top: 5%;"
-        placeholder="Select"
-        clearable
-        @change="addListExclude"
-      >
-        <el-option
-          v-for="item in getterDataRecords"
-          :key="item.clientId"
-          :label="item.name"
-          :value="item.uuid"
-        />
-      </el-select>
-    </div>
-    <div
-      style="margin-bottom: 10%;"
-    >
-      <span
-        style="margin-bottom: 10%;"
-      >
-        {{ $t('data.recordAccess.recordDisplay') }}
-      </span>
-      <br>
-      <el-select
-        v-model="getterListInclude"
-        multiple
-        style="margin-top: 5%;"
-        placeholder="Select"
-        @change="addListInclude"
-      >
-        <el-option
-          v-for="item in getterDataRecords"
-          :key="item.clientId"
-          :label="item.name"
-          :value="item.uuid"
-        />
-      </el-select>
-    </div>
-    <el-form
-      label-position="top"
-      size="small"
-      class="create-bp"
-    >
-      <el-row :gutter="24">
-        <template
-          v-for="(record, index) in getterListInclude"
+  <div>
+    <el-card class="box-card">
+      <div slot="header" class="clearfix" style="padding-bottom: 2%;">
+        <span>
+          {{ $t('data.recordAccess.actions') }}
+        </span>
+      </div>
+      <div style="margin-bottom: 5%;">
+        <span style="margin-bottom: 5%;">
+          {{ $t('data.recordAccess.availableRoles') }} ({{ labelListExcludo.length }})
+        </span>
+        <br>
+        <el-select
+          v-model="labelListExcludo"
+          multiple
+          style="margin-top: 2.5%;"
+          filterable
+          placeholder="Select"
+          collapse-tags
+          @change="addListExclude"
         >
-          <div :key="index" style="margin-left: 5%;">
-            <el-tag>
-              {{ record }}
-            </el-tag>
-            <p>
-              {{ $t('data.recordAccess.isReadonly') }}
-              <el-checkbox v-model="isReadonly" />
-            </p>
-            <p>
-              {{ $t('data.recordAccess.isDependentEntities') }} <el-checkbox v-model="isDependentEntities" />
-            </p>
-          </div>
-        </template>
-      </el-row>
-    </el-form>
-  </el-card>
+          <el-option
+            v-for="item in includedList"
+            :key="item.roleUuid"
+            :label="item.roleName"
+            :value="item.roleName"
+          />
+        </el-select>
+      </div>
+      <div>
+        <span
+          style="margin-bottom: 5%;"
+        >
+          {{ $t('data.recordAccess.modeMobile.accessRoles') }} ({{ labelListInclude.length }})
+        </span>
+        <br>
+        <el-select
+          v-model="labelListInclude"
+          multiple
+          placeholder="Select"
+          filterable
+          collapse-tags
+          style="margin-top: 2.5%;"
+          @change="addListInclude"
+        >
+          <el-option
+            v-for="item in excludedList"
+            :key="item.roleUuid"
+            :label="item.roleName"
+            :value="item.roleName"
+          />
+        </el-select>
+      </div>
+      <!-- Roles with Access and Read Only -->
+      <div
+        style="padding-top: 9%;"
+      >
+        <span
+          style="margin-bottom: 5%;"
+        >
+          {{ $t('data.recordAccess.modeMobile.accessRolesIsReadonly') }} ({{ listRolesLockReadOnly.length }})
+        </span>
+        <br>
+        <el-select
+          v-model="listRolesLockReadOnly"
+          multiple
+          placeholder="Select"
+          filterable
+          collapse-tags
+          style="margin-top: 2.5%;"
+          @change="addRolesLockReadOnly"
+        >
+          <el-option
+            v-for="item in includedList.filter(element => element.isExclude)"
+            :key="item.roleUuid"
+            :label="item.roleName"
+            :value="item.roleName"
+          />
+        </el-select>
+      </div>
+      <!-- Locked Roles -->
+      <div
+        style="padding-top: 9%;"
+      >
+        <span
+          style="margin-bottom: 5%;"
+        >
+          {{ $t('data.recordAccess.modeMobile.lockedRoles') }} ({{ listRolesLock.length }})
+        </span>
+        <br>
+        <el-select
+          v-model="listRolesLock"
+          multiple
+          placeholder="Select"
+          filterable
+          collapse-tags
+          style="margin-top: 2.5%;"
+          @change="addRolesLock"
+        >
+          <el-option
+            v-for="item in includedList"
+            :key="item.roleUuid"
+            :label="item.roleName"
+            :value="item.roleName"
+          />
+        </el-select>
+      </div>
+      <!-- Locked Roles with Dependent Entities -->
+      <div
+        style="padding-top: 9%;"
+      >
+        <span
+          style="margin-bottom: 5%;"
+        >
+          {{ $t('data.recordAccess.modeMobile.lockedRolesIsDependentEntities') }} ({{ listRolesUnLock.length }})
+        </span>
+        <br>
+        <el-select
+          v-model="listRolesUnLock"
+          multiple
+          placeholder="Select"
+          filterable
+          collapse-tags
+          style="margin-top: 2.5%;"
+          @change="addlockedRolesIsDependentEntities"
+        >
+          <el-option
+            v-for="item in includedList.filter(element => !element.isExclude)"
+            :key="item.roleUuid"
+            :label="item.roleName"
+            :value="item.roleName"
+          />
+        </el-select>
+      </div>
+    </el-card>
+    <span style="float: right;padding-top: 1%;">
+      <el-button
+        type="danger"
+        icon="el-icon-close"
+        @click="close"
+      />
+      <el-button
+        type="primary"
+        icon="el-icon-check"
+        @click="SendRecorAccess(includedList)"
+      />
+    </span>
+  </div>
 </template>
 
 <script>
+import recordAccessMixin from './recordAccess.js'
 
 export default {
   name: 'RecordAccessMobile',
+  mixins: [recordAccessMixin],
   props: {
     parentUuid: {
       type: String,
@@ -111,102 +185,175 @@ export default {
     return {
       group: 'sequence',
       isReadonly: false,
-      isDependentEntities: true,
-      getterDataRecords: this.$store.getters['user/getRoles']
+      isDependentEntities: false,
+      labelListInclude: [],
+      labelListExcludo: []
     }
   },
   computed: {
-    getterListExclude() {
-      const list = this.getterDataRecords.filter(item => item.isPersonalLock === false)
-      return list.map(element => {
-        return element.name
+    listExclude() {
+      return this.excludedList.map(element => {
+        return element.roleName
       })
     },
-    getterListInclude() {
-      const list = this.getterDataRecords.filter(item => item.isPersonalLock === true)
-      return list.map(element => {
-        return element.name
+    listInclude() {
+      return this.includedList.map(element => {
+        return element.roleName
       })
     },
-    getIdentifiersList() {
-      return this.identifiersList
-        .filter(item => item.componentPath !== 'FieldSelect')
+    listRolesLock: {
+      get() {
+        const list = this.includedList.filter(element => {
+          return !element.isExclude
+        })
+        if (list) {
+          return list.map(element => {
+            return element.roleName
+          })
+        }
+        return []
+      },
+      set(value) {
+      }
+    },
+    listRolesLockReadOnly: {
+      get() {
+        const list = this.includedList.filter(element => {
+          if (element.isExclude && element.isReadOnly) {
+            return element
+          }
+        })
+        if (list) {
+          return list.map(element => {
+            return element.roleName
+          })
+        }
+        return []
+      },
+      set(value) {
+      }
+    },
+    listLabelRolesLockReadOnly: {
+      get() {
+        const list = this.includedList.filter(element => {
+          if (!element.isExclude && element.isReadOnly) {
+            return element
+          }
+        })
+        if (list) {
+          return list.map(element => {
+            return element.roleName
+          })
+        }
+        return []
+      },
+      set(value) {
+      }
+    },
+    listRolesUnLock: {
+      get() {
+        const list = this.includedList.filter(element => {
+          if (!element.isExclude && element.isDependentEntities) {
+            return element
+          }
+        })
+        if (list) {
+          return list.map(element => {
+            return element.roleName
+          })
+        }
+        return []
+      },
+      set(value) {
+      }
     }
   },
-  created() {
-    const record = this.getterDataRecords.map(record => {
-      return {
-        id: record.id,
-        uuid: record.uuid,
-        IsExclude: record.isPersonalLock,
-        isDependentEntities: this.isDependentEntities,
-        isReadonly: this.isReadonly
-      }
-    })
-    this.$store.dispatch('changeList', record)
+  watch: {
+    listInclude(value) {
+      this.labelListInclude = value
+    },
+    listExclude(value) {
+      this.labelListExcludo = value
+    }
   },
   methods: {
-    handleChange(value) {
-      const action = Object.keys(value)[0] // get property
-      const element = value.[action].element
-      const index = this.getterDataRecords.findIndex(role => role.id === element.id)
-      switch (action) {
-        case 'added':
-          this.addItem({
-            index,
-            element
-          })
-          break
-        case 'removed':
-          this.deleteItem({
-            index,
-            element
-          })
-          break
-      }
-    },
     addListInclude(element) {
-      const index = this.getterDataRecords.findIndex(item => element[element.length - 1] === item.uuid)
-      this.getterDataRecords[index].isPersonalLock = true
-    },
-    addListExclude(element) {
-      const index = this.getterDataRecords.findIndex(item => element[element.length - 1] === item.uuid)
-      this.getterDataRecords[index].isPersonalLock = false
-    },
-    /**
-     * @param {number} index: the index of the added element
-     * @param {object} element: the added element
-     */
-    addItem({
-      index,
-      element
-    }) {
-      this.getterDataRecords[index].isPersonalLock = !element.isPersonalLock
-    },
-    /**
-     * @param {number} index: the index of the element before remove
-     * @param {object} element: the removed element
-     */
-    deleteItem({
-      index,
-      element
-    }) {
-      this.getterDataRecords[index].isPersonalLock = !element.isPersonalLock
-      const record = this.getterDataRecords.map(record => {
-        return {
-          id: record.id,
-          uuid: record.uuid,
-          IsExclude: record.isPersonalLock,
-          isDependentEntities: this.isDependentEntities,
-          isReadonly: this.isReadonly
+      const index = this.recordAccess.roles.findIndex(item => {
+        if (element[element.length - 1] === item.roleName) {
+          return item
         }
       })
-      this.$store.dispatch('changeList', record)
+      if (index >= 0) {
+        this.addItem({
+          index,
+          element: this.recordAccess.roles[index]
+        })
+      }
     },
-    getOrder(arrayToSort, orderBy = this.order) {
-      return arrayToSort.sort((itemA, itemB) => {
-        return itemA[orderBy] - itemB[orderBy]
+    addListExclude(element) {
+      const index = this.recordAccess.roles.findIndex(item => {
+        if (element[element.length - 1] === item.roleName) {
+          return item
+        }
       })
+      if (index >= 0) {
+        this.deleteItem({
+          index,
+          element: this.recordAccess.roles[index]
+        })
+      }
+    },
+    addRolesLock(element) {
+      const index = this.recordAccess.roles.findIndex(item => {
+        if (element[element.length - 1] === item.roleName) {
+          return item
+        }
+      })
+
+      if (index >= 0) {
+        this.recordAccess.roles[index].isExclude = !this.recordAccess.roles[index].isExclude
+      }
+    },
+    addRolesLockReadOnly(element) {
+      const index = this.recordAccess.roles.find(item => {
+        if (element[element.length - 1] === item.roleName) {
+          return item
+        }
+      })
+      if (index) {
+        index.isReadOnly = !index.isReadOnly
+      } else {
+        const undo = this.recordAccess.roles.find(item => {
+          if (this.listRolesLockReadOnly[0] === item.roleName) {
+            return item
+          }
+        })
+        undo.isReadOnly = !undo.isReadOnly
+      }
+    },
+    addlockedRolesIsDependentEntities(element) {
+      const index = this.recordAccess.roles.find(item => {
+        if (element[element.length - 1] === item.roleName) {
+          return item
+        }
+      })
+      if (index) {
+        index.isDependentEntities = !index.isDependentEntities
+      } else {
+        const undo = this.recordAccess.roles.find(item => {
+          if (this.listRolesUnLock[0] === item.roleName) {
+            return item
+          }
+        })
+        undo.isDependentEntities = !undo.isDependentEntities
+      }
+    },
+    SendRecorAccess(list) {
+      // list.forEach(element => {
+      //   element.isReadOnly = this.isReadonly
+      //   element.isDependentEntities = this.isDependentEntities
+      // })
+      this.saveRecordAccess(list)
     }
   }
 }
@@ -258,6 +405,28 @@ export default {
   }
 </style>
 <style lang="scss">
+  .el-card__header {
+    background: rgba(245, 247, 250, 0.75);
+    padding-top: 18px;
+    padding-right: 20px;
+    padding-bottom: 1%;
+    padding-left: 20px;
+    border-bottom: 1px solid #f5f7fa;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .el-card__body {
+    padding-top: 2.5%;
+  }
+  .scroll-panel-right-mode-mobile {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .el-scrollbar__bar.is-vertical > div {
+    width: 100%;
+    transform: translateY(998%);
+  }
   .board {
     width: 100%;
     margin-left: 20px;

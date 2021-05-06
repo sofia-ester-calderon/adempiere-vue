@@ -11,6 +11,7 @@ export default {
     page404: '404',
     profile: 'Perfil',
     ProcessActivity: 'Histórico Procesos',
+    withoutLog: 'No se Encontró Registro de Error ',
     ProductInfo: 'Informacion de Producto',
     role: 'Rol',
     organization: 'Organización',
@@ -98,7 +99,13 @@ export default {
   documentation: {
     documentation: 'Documentación',
     github: 'Repositorio Github',
-    releases: 'Liberaciones'
+    releases: 'Liberaciones',
+    branches: 'Ramas',
+    code: 'Código',
+    issues: 'Solicitudes de extracción',
+    downloadZip: 'descargar  Zip',
+    releaseNotes: 'Nota de Liberaciones'
+
   },
   permission: {
     addRole: 'Nuevo rol',
@@ -168,6 +175,11 @@ export default {
       allUsers: ', todos los Usuarios',
       thisWindow: ' y esta Ventana',
       allWindows: ' y todas las Ventanas'
+    }
+  },
+  grid: {
+    recordAccess: {
+      accessGranted: 'Acceso otorgado a los roles'
     }
   },
   views: {
@@ -310,11 +322,19 @@ export default {
     lockRecord: 'Bloquear Registro',
     noDescription: 'Sin Descripción',
     recordAccess: {
+      modeMobile: {
+        accessRoles: 'Roles con Acceso',
+        accessRolesIsReadonly: 'Roles con Acceso y Solo lectura',
+        lockedRoles: 'Roles Bloqueados',
+        lockedRolesIsDependentEntities: 'Roles Bloqueados con Entidades Dependientes'
+      },
       actions: 'Acceso a Registros',
-      hideRecord: 'Ocultar Registro',
-      recordDisplay: 'Permitir Visualización del Registro',
+      availableRoles: 'Roles Disponibles',
+      configRoles: 'Roles Configurados',
       isReadonly: 'Solo  Lectura',
-      isDependentEntities: 'Entidades Dependientes'
+      isDependentEntities: 'Entidades Dependientes',
+      isLock: 'Bloquear',
+      isUnlock: 'Desbloquear'
     },
     selectionRequired: 'Debe seleccionar un registro',
     undo: 'Deshacer',

@@ -11,6 +11,7 @@ export default {
     page404: '404',
     profile: 'Profile',
     ProcessActivity: 'Process Logs',
+    withoutLog: 'No Error Log Found',
     ProductInfo: 'Product Information',
     role: 'Role',
     organization: 'Organization',
@@ -98,7 +99,12 @@ export default {
   documentation: {
     documentation: 'Documentation',
     github: 'Github Repository',
-    releases: 'Releases'
+    releases: 'Releases',
+    branches: 'Branches',
+    code: 'Code',
+    issues: 'Issues',
+    downloadZip: 'Download Zip',
+    releaseNotes: 'Release Notes'
   },
   permission: {
     addRole: 'New Role',
@@ -168,6 +174,11 @@ export default {
       allUsers: ', all Users',
       thisWindow: ' and this Window',
       allWindows: ' and all Windows'
+    }
+  },
+  grid: {
+    recordAccess: {
+      accessGranted: 'Access granted for roles'
     }
   },
   views: {
@@ -335,11 +346,19 @@ export default {
     lockRecord: 'Lock Record',
     noDescription: 'No Description',
     recordAccess: {
+      modeMobile: {
+        accessRoles: 'Access Roles',
+        accessRolesIsReadonly: 'Roles with Access and Read Only',
+        lockedRoles: 'Locked Roles',
+        lockedRolesIsDependentEntities: 'Locked Roles with Dependent Entities'
+      },
       actions: 'Record Access',
-      hideRecord: 'Hide Record',
-      recordDisplay: 'Allow Record Display',
+      configRoles: 'Roles Configurados',
+      availableRoles: 'Roles Configured',
       isReadonly: 'Reading Only',
-      isDependentEntities: 'Dependent Entities'
+      isDependentEntities: 'Dependent Entities',
+      isLock: 'Block',
+      isUnlock: 'Unblock'
     },
     selectionRequired: 'You must select a record',
     undo: 'Undo',

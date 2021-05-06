@@ -16,196 +16,149 @@
  along with this program.  If not, see <https:www.gnu.org/licenses/>.
 -->
 <template>
-  <div class="board">
-    <div
-      :key="1"
-      class="kanban todo"
-      header-text="Todo"
-    >
-      <div class="board-column">
-        <div class="board-column-header">
-          {{ $t('data.recordAccess.hideRecord') }} ({{ getterListExclude.length }})
-        </div>
-        <draggable
-          v-model="getterListExclude"
-          :group="group"
-          v-bind="$attrs"
-          class="board-column-content"
-        >
-          <div
-            v-for="element in getterListExclude"
-            :key="element.UUID"
-            class="board-item"
-          >
-            {{ element.clientName }}
+  <div>
+    <div class="board">
+      <div
+        :key="1"
+        class="kanban todo"
+        header-text="Todo"
+        style="padding: 0px;margin: 0px;width: 35%;padding-right: 2%;"
+      >
+        <div class="board-column">
+          <div class="board-column-header">
+            {{ $t('data.recordAccess.availableRoles') }} ({{ excludedList.length }})
           </div>
+          <draggable
+            v-model="excludedList"
+            :group="group"
+            v-bind="$attrs"
+            class="board-column-content"
+          >
+            <div
+              v-for="(element, index) in excludedList"
+              :key="element.roleUuid"
+              class="board-item"
+              style="height: 50%;padding-left: 0px;padding-right: 0px;min-width: 250px;max-width: 100%;"
+            >
+              <el-table
+                v-if="!isEmptyValue(excludedList)"
+                :data="[excludedList[index]]"
+                border
+                :show-header="false"
+                style="min-width: 100%;padding-left: 0%;padding-right: 0%;"
+              >
+                <el-table-column>
+                  <template slot-scope="scope">
+                    <b style="white-space: normal;">
+                      {{
+                        scope.row.roleName
+                      }}
+                    </b>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
 
-        </draggable>
-      </div>
-    </div>
-    <div
-      :key="2"
-      class="kanban working"
-      header-text="Working"
-    >
-      <div class="board-column">
-        <div class="board-column-header">
-          {{ $t('data.recordAccess.recordDisplay') }} {{ getterListInclude.length }}
+          </draggable>
         </div>
-        <draggable
-          v-model="getterListInclude"
-          :group="group"
-          v-bind="$attrs"
-          class="board-column-content"
-          @change="handleChange"
-        >
-          <div
-            v-for="element in getterListInclude"
-            :key="element.UUID"
-            class="board-item"
-          >
-            {{ element.name }}
-            <el-divider direction="vertical" />
-            {{ $t('data.recordAccess.isReadonly') }} <el-checkbox v-model="isReadonly" />
-            <el-divider direction="vertical" />
-            {{ $t('data.recordAccess.isDependentEntities') }} <el-checkbox v-model="isDependentEntities" />
+      </div>
+      <div
+        :key="2"
+        class="kanban working"
+        header-text="Working"
+        style="padding: 0px;margin: 0px;width: 65%;padding-right: 1.5%;"
+      >
+        <div class="board-column">
+          <div class="board-column-header">
+            {{ $t('data.recordAccess.configRoles') }} ({{ includedList.length }})
           </div>
-        </draggable>
+          <draggable
+            v-model="includedList"
+            :group="group"
+            v-bind="$attrs"
+            class="board-column-content"
+            @change="handleChange"
+          >
+            <div
+              v-for="(element, index) in includedList"
+              :key="element.roleUuid"
+              class="board-item"
+              style="height: 50%;padding-left: 0px;padding-right: 0px;min-width: 400px;max-width: 100%;"
+            >
+              <el-table
+                v-if="!isEmptyValue(includedList)"
+                :data="[includedList[index]]"
+                border
+                :show-header="false"
+                style="padding-left: 0%;padding-right: 0%;"
+              >
+                <el-table-column>
+                  <template slot-scope="scope">
+                    <b style="white-space: normal;">
+                      {{
+                        scope.row.roleName
+                      }}
+                    </b>
+                  </template>
+                </el-table-column>
+                <el-table-column min-width="100">
+                  <template slot-scope="scope">
+                    <el-switch
+                      v-model="scope.row.isExclude"
+                      active-color="#13ce66"
+                      inactive-color="#ff4949"
+                      :inactive-text="$t('data.recordAccess.isLock')"
+                      :active-text="$t('data.recordAccess.isUnlock')"
+                    />
+                  </template>
+                </el-table-column>
+                <el-table-column>
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.isExclude">
+                      <el-switch
+                        v-model="scope.row.isReadOnly"
+                        :inactive-text="$t('data.recordAccess.isReadonly')"
+                        active-text="Editable"
+                      />
+                    </div>
+                    <div v-else>
+                      <b>
+                        {{ $t('data.recordAccess.isDependentEntities') }}
+                      </b>
+                      <el-switch v-model="scope.row.isDependentEntities" />
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </draggable>
+        </div>
       </div>
     </div>
+    <span slot="footer" class="dialog-footer" style="float: right;padding-top: 1%;">
+      <el-button
+        type="danger"
+        icon="el-icon-close"
+        @click="close"
+      />
+      <el-button
+        type="primary"
+        icon="el-icon-check"
+        @click="saveRecordAccess(includedList)"
+      />
+    </span>
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
-
+import recordAccessMixin from './recordAccess.js'
 export default {
   name: 'RecordAccessDesktop',
   components: {
     draggable
   },
-  props: {
-    parentUuid: {
-      type: String,
-      default: undefined
-    },
-    containerUuid: {
-      type: String,
-      default: undefined
-    },
-    order: {
-      type: String,
-      default: undefined
-    },
-    included: {
-      type: String,
-      default: undefined
-    },
-    keyColumn: {
-      type: String,
-      default: undefined
-    },
-    identifiersList: {
-      type: Array,
-      default: undefined
-    }
-  },
-  data() {
-    return {
-      group: 'sequence',
-      isReadonly: false,
-      isDependentEntities: true,
-      getterDataRecords: this.$store.getters['user/getRoles']
-    }
-  },
-  computed: {
-    getterListExclude: {
-      get() {
-        return this.getterDataRecords.filter(item => item.isPersonalLock === false)
-      },
-      set(value) {
-      }
-    },
-    getterListInclude: {
-      get() {
-        return this.getterDataRecords.filter(item => item.isPersonalLock === true)
-      },
-      set(value) {
-      }
-    },
-    getIdentifiersList() {
-      return this.identifiersList
-        .filter(item => item.componentPath !== 'FieldSelect')
-    }
-  },
-  created() {
-    const record = this.getterDataRecords.map(record => {
-      return {
-        id: record.id,
-        uuid: record.uuid,
-        IsExclude: record.isPersonalLock,
-        isDependentEntities: this.isDependentEntities,
-        isReadonly: this.isReadonly
-      }
-    })
-    this.$store.dispatch('changeList', record)
-  },
-  methods: {
-    handleChange(value) {
-      const action = Object.keys(value)[0] // get property
-      const element = value.[action].element
-      const index = this.getterDataRecords.findIndex(role => role.id === element.id)
-      switch (action) {
-        case 'added':
-          this.addItem({
-            index,
-            element
-          })
-          break
-        case 'removed':
-          this.deleteItem({
-            index,
-            element
-          })
-          break
-      }
-    },
-    /**
-     * @param {number} index: the index of the added element
-     * @param {object} element: the added element
-     */
-    addItem({
-      index,
-      element
-    }) {
-      this.getterDataRecords[index].isPersonalLock = !element.isPersonalLock
-    },
-    /**
-     * @param {number} index: the index of the element before remove
-     * @param {object} element: the removed element
-     */
-    deleteItem({
-      index,
-      element
-    }) {
-      this.getterDataRecords[index].isPersonalLock = !element.isPersonalLock
-      const record = this.getterDataRecords.map(record => {
-        return {
-          id: record.id,
-          uuid: record.uuid,
-          IsExclude: record.isPersonalLock,
-          isDependentEntities: this.isDependentEntities,
-          isReadonly: this.isReadonly
-        }
-      })
-      this.$store.dispatch('changeList', record)
-    },
-    getOrder(arrayToSort, orderBy = this.order) {
-      return arrayToSort.sort((itemA, itemB) => {
-        return itemA[orderBy] - itemB[orderBy]
-      })
-    }
-  }
+  mixins: [recordAccessMixin]
 }
 </script>
 
@@ -217,7 +170,6 @@ export default {
     overflow: hidden;
     background: #f0f0f0;
     border-radius: 3px;
-
     .board-column-header {
       height: 50px;
       line-height: 50px;
@@ -228,7 +180,6 @@ export default {
       color: #fff;
       border-radius: 3px 3px 0 0;
     }
-
     .board-column-content {
       height: auto;
       overflow: hidden;
@@ -238,7 +189,6 @@ export default {
       justify-content: flex-start;
       flex-direction: column;
       align-items: center;
-
       .board-item {
         cursor: pointer;
         width: 100%;
@@ -255,7 +205,39 @@ export default {
   }
 </style>
 <style lang="scss">
+  .el-table .warning-row {
+    border: solid;
+    border-color: red;
+    background: white;
+  }
+
+  .el-table .success-row {
+    background: white;
+    border: solid;
+    border-color: #11b95c42;
+  }
+  .board-column .board-column-content[data-v-67e5b2d0] {
+    max-height: 55vh;
+    height: auto;
+    overflow: auto;
+    border: 10px solid transparent;
+    min-height: 60px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
   .board {
+    height: 90%;
     width: 100%;
     margin-left: 20px;
     display: flex;

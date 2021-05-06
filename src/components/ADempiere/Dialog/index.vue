@@ -17,6 +17,7 @@
 -->
 <template>
   <el-dialog
+    v-if="!showRecordAccess"
     :title="modalMetadata.name"
     :visible="isVisibleDialog"
     show-close
@@ -30,9 +31,6 @@
     <div
       v-if="panelType !== 'From'"
     >
-      <record-access
-        v-if="showRecordAccess"
-      />
       <sequence-order
         v-if="modalMetadata.isSortTab"
         key="order"
@@ -54,7 +52,7 @@
         />
       </template>
     </div>
-    <span slot="footer" class="dialog-footer">
+    <span v-if="!showRecordAccess" slot="footer" class="dialog-footer">
       <el-button
         type="danger"
         icon="el-icon-close"
@@ -72,17 +70,13 @@
 <script>
 import MainPanel from '@/components/ADempiere/Panel'
 import SequenceOrder from '@/components/ADempiere/SequenceOrder'
-import RecordAccess from '@/components/ADempiere/RecordAccess'
 import { showNotification } from '@/utils/ADempiere/notification'
-import {
-  updateAccessRecord
-} from '@/api/ADempiere/private-access'
+
 export default {
   name: 'ModalProcess',
   components: {
     MainPanel,
-    SequenceOrder,
-    RecordAccess
+    SequenceOrder
   },
   props: {
     parentUuid: {
@@ -110,7 +104,7 @@ export default {
       if (this.isMobile) {
         return 80
       }
-      return 50
+      return 95
     },
     isVisibleDialog() {
       return this.$store.state['process/index'].isVisibleDialog
@@ -180,7 +174,7 @@ export default {
           this.$store.dispatch('processPos', {
             action: action, // process metadata
             parentUuid: this.parentUuid,
-            idProcess: this.$store.getters.posAttributes.currentOrder.id,
+            idProcess: this.$store.getters.posAttributes.currentPointOfSales.currentOrder.id,
             containerUuid: this.containerUuid,
             panelType: this.panelType, // determinate if get table name and record id (window) or selection (browser)
             parametersList: this.$store.getters.getPosParameters
@@ -229,10 +223,6 @@ export default {
             })
           }
         }
-      }
-      if (action.action === undefined) {
-        const list = this.$store.getters.getListRecordAcces
-        updateAccessRecord(list)
       }
     }
   }
