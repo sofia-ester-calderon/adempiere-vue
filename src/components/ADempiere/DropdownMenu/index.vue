@@ -150,6 +150,7 @@ export default {
     margin: 10px;
     cursor: pointer;
   }
+
   .icon-wrapper {
     height: 100%;
     width: 20%;
@@ -163,10 +164,8 @@ export default {
     color: #36a3f7;
   }
   .custom-card:hover {
-    .icon-wrapper {
-      color: #fff;
-      background: #36a3f7;
-    }
+    background-color: #eaf5fe;
+    border: 1px solid #36a3f7;
   }
   .text-wrapper {
     margin-left: 50px;
