@@ -290,7 +290,17 @@ function genComponentSidebar(type = '') {
     '/guide/components/information.md',
     '/guide/components/update.md',
     '/guide/components/translation.md',
-    '/guide/components/zoom-in.md'
+    '/guide/components/zoom-in.md',
+    '/guide/components/activity.md',
+    '/guide/components/close-tab.md',
+    '/guide/components/close-other-tabs.md',
+    '/guide/components/close-all.md',
+    '/guide/components/export-download-reports.md',
+    '/guide/components/search.md',
+    '/guide/components/change-role.md',
+    '/guide/components/hide-menu.md',
+    '/guide/components/references.md',
+    '/guide/components/lock-unlock-records.md'
   ]
   return mapArr.map(i => {
     return type + i

@@ -1,7 +1,7 @@
 <!--
  ADempiere-Vue (Frontend) for ADempiere ERP & CRM Smart Business Solution
  Copyright (C) 2017-Present E.R.P. Consultores y Asociados, C.A.
- Contributor(s): Edwin Betancourt edwinBetanc0urt@hotmail.com www.erpya.com
+ Contributor(s): Edwin Betancourt EdwinBetanc0urt@outlook.com www.erpya.com
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -44,33 +44,19 @@
             class="content-collapse"
             :style="isEmptyValue(formMetadata.fieldsList) ? 'height: 100% !important;' : ''"
           >
-            <h3 v-if="isShowTitleForm" class="warn-content text-center">
-              <el-popover
-                v-if="!isEmptyValue(formMetadata.help)"
-                ref="helpTitle"
-                placement="top-start"
-                :title="formTitle"
-                width="400"
-                trigger="hover"
-              >
-                <div v-html="formMetadata.help" />
-              </el-popover>
+            <title-and-help
+              v-if="isShowTitleForm"
+              :name="formName"
+              :help="formMetadata.help"
+            >
               <el-button
-                v-popover:helpTitle
-                type="text"
-                class="title text-center"
-              >
-                {{ formTitle }}
-              </el-button>
-              <el-button
-                v-if="isShowTitleForm"
                 type="text"
                 style="float: right"
                 :circle="true"
                 icon="el-icon-arrow-up"
                 @click="changeDisplatedTitle"
               />
-            </h3>
+            </title-and-help>
             <el-button
               v-if="!isShowTitleForm"
               type="text"
@@ -79,11 +65,12 @@
               icon="el-icon-arrow-down"
               @click="changeDisplatedTitle"
             />
+
             <form-panel
               :metadata="{
                 ...formMetadata,
-                fileName: fromFileName,
-                title: formTitle
+                fileName: formFileName,
+                title: formName
               }"
             />
           </el-card>
@@ -106,13 +93,15 @@
 import ContextMenu from '@/components/ADempiere/ContextMenu'
 import FormPanel from '@/components/ADempiere/Form'
 import ModalDialog from '@/components/ADempiere/Dialog'
+import TitleAndHelp from '@/components/ADempiere/TitleAndHelp'
 
 export default {
   name: 'FormView',
   components: {
     ContextMenu,
     FormPanel,
-    ModalDialog
+    ModalDialog,
+    TitleAndHelp
   },
   data() {
     return {
@@ -123,15 +112,15 @@ export default {
     }
   },
   computed: {
-    formTitle() {
+    formName() {
       if (this.$route.meta.title === 'PriceChecking') {
         return this.$t('route.PriceChecking')
       } else if (this.$route.meta.title === 'ProductInfo') {
         return this.$t('route.ProductInfo')
       }
-      return this.formMetadata.name || this.$route.meta.title
+      return this.formMetadata.name
     },
-    fromFileName() {
+    formFileName() {
       return this.formMetadata.fileName || this.$route.meta.title
     },
     getterForm() {
@@ -205,9 +194,9 @@ export default {
     width: 100%;
     height: 100%!important;
   }
+
   .view-base {
-    height: 100%;
-    min-height: calc(100vh - 84px);
+    /** Add this rule to view base */
     overflow: hidden;
   }
   .show-header-view-base {
@@ -215,40 +204,15 @@ export default {
     min-height: calc(100vh - 26px);
     overflow: hidden;
   }
-  .view-loading {
-    padding: 100px 100px;
-    height: 100%;
-  }
-
-  .title, .custom-title {
-    color: #000;
-    text-size-adjust: 20px;
-    font-size: 100%;
-    font-weight: 605 !important;
-    /* left: 50%; */
-  }
 
   .w-33 {
     width: 100%;
     background-color: transparent;
   }
 
-  .warn-content {
-    margin: 0px 0px !important;
-    padding-top: 0px !important;
-  }
-  .content-help {
-    width: 100%;
-    height: 200%;
-    padding-left: 39px !important;
-  }
   .el-card {
     width: 100% !important;
     height: 100% !important;
-  }
-  .content-collapse {
-    padding-left: 20 px !important;
-    padding-top: 50 px !important;
   }
 
   .center{

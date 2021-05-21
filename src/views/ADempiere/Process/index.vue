@@ -1,7 +1,7 @@
 <!--
  ADempiere-Vue (Frontend) for ADempiere ERP & CRM Smart Business Solution
  Copyright (C) 2017-Present E.R.P. Consultores y Asociados, C.A.
- Contributor(s): Edwin Betancourt edwinBetanc0urt@hotmail.com www.erpya.com
+ Contributor(s): Edwin Betancourt EdwinBetanc0urt@outlook.com www.erpya.com
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -37,25 +37,11 @@
       <el-row :gutter="20">
         <el-col :span="24">
           <el-card class="content-collapse">
-            <h3 v-show="!isEmptyValue(processTitle)" class="warn-content text-center">
-              <el-popover
-                v-if="!isEmptyValue(processMetadata.help)"
-                ref="helpTitle"
-                placement="top-start"
-                :title="processTitle"
-                width="400"
-                trigger="hover"
-              >
-                <div v-html="processMetadata.help" />
-              </el-popover>
-              <el-button
-                v-popover:helpTitle
-                type="text"
-                class="title text-center"
-              >
-                {{ processMetadata.name }}
-              </el-button>
-            </h3>
+            <title-and-help
+              :name="processMetadata.name"
+              :help="processMetadata.help"
+            />
+
             <main-panel
               :position-tab="processMetadata.accesLevel"
               :container-uuid="processUuid"
@@ -75,7 +61,7 @@
     :element-loading-text="$t('notifications.loading')"
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(255, 255, 255, 0.8)"
-    class="loading-process"
+    class="view-loading"
   />
 </template>
 
@@ -84,12 +70,14 @@
 // the ContextMenu and sticky must be placed in the layout
 import ContextMenu from '@/components/ADempiere/ContextMenu'
 import MainPanel from '@/components/ADempiere/Panel'
+import TitleAndHelp from '@/components/ADempiere/TitleAndHelp'
 
 export default {
   name: 'ProcessView',
   components: {
     MainPanel,
-    ContextMenu
+    ContextMenu,
+    TitleAndHelp
   },
   props: {
     isEdit: {
@@ -111,9 +99,6 @@ export default {
     },
     getterProcess() {
       return this.$store.getters.getPanel(this.processUuid)
-    },
-    processTitle() {
-      return this.processMetadata.name || this.$route.meta.title
     }
   },
   created() {
@@ -154,42 +139,8 @@ export default {
   }
 </style>
 <style scoped >
-  .view-base {
-    height: 100%;
-    min-height: calc(100vh - 84px);
-  }
-
-  .loading-process {
-    padding: 100px 100px;
-    height: 100%;
-  }
-
-  .title {
-    color: #000000;
-    text-size-adjust: 20px;
-    font-size: 100%;
-    font-weight: 605!important;
-  }
-  .warn-content {
-    margin: 0px 0px !important;
-    padding-top: 0px !important;
-  }
-  .content-help {
-    width: 100%;
-    height: 100%;
-    padding-left: 39px !important;
-  }
   .el-card {
     width: 100% !important;
     height: 100% !important;
-  }
-  .sticky-submenu {
-    position: absolute !important;
-    right: 0;
-    top: 0;
-  }
-  .content-collapse {
-    padding-left: 20 px !important;
-    padding-top: 50 px !important;
   }
 </style>
