@@ -24,11 +24,11 @@
     <el-col
       v-if="isDisplayed"
       key="is-panel-template"
-      :xs="sizeFieldResponsive.xs"
-      :sm="sizeFieldResponsive.sm"
-      :md="sizeFieldResponsive.md"
-      :lg="sizeFieldResponsive.lg"
-      :xl="sizeFieldResponsive.xl"
+      :xs="24"
+      :sm="12"
+      :md="8"
+      :lg="8"
+      :xl="8"
       :class="classField"
     >
       <el-form-item>
@@ -38,17 +38,11 @@
             size="mini"
             :hide-on-click="true"
             trigger="click"
-            :style="isMobile ? 'text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width:'+labelStyle+'%' : ''"
+            :style="'text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width:'+labelStyle+'%'"
             @command="handleCommand"
             @click="false"
           >
-            <div :style="isMobile ? 'display: flex;width: auto;' : 'display: block;'">
-              <span :style="isMandatory && isEmptyValue(valueField) ? 'border: aqua; color: #f34b4b' : 'border: aqua;'">
-                <span key="is-field-name">
-                  {{ field.name }}
-                </span>
-              </span>
-            </div>
+            <label-field :is-mandatory="isMandatory && isEmptyValue(valueField)" :label="field.name" :is-mobile="true" />
             <el-dropdown-menu slot="dropdown">
               <template
                 v-for="(option, key) in optionField"
@@ -112,13 +106,7 @@
           <el-menu v-else-if="field.panelType !== 'form' && !isMobile" class="el-menu-demo" mode="horizontal" :unique-opened="true" style="z-index: 0" :menu-trigger="triggerMenu" @open="handleOpen" @close="handleClose" @select="handleSelect">
             <el-submenu index="menu">
               <template slot="title">
-                <div :style="isMobile ? 'display: flex;width: auto;' : 'display: block;'">
-                  <span :style="isMandatory && isEmptyValue(valueField) ? 'border: aqua; color: #f34b4b' : 'border: aqua;'">
-                    <span key="is-field-name">
-                      {{ field.name }}
-                    </span>
-                  </span>
-                </div>
+                <label-field :is-mandatory="isMandatory && isEmptyValue(valueField)" :label="field.name" :is-mobile="false" />
               </template>
               <el-menu-item
                 v-for="(option, key) in listOption"
@@ -221,7 +209,7 @@
 <script>
 import documentStatus from '@/components/ADempiere/Field/popover/documentStatus'
 import operatorComparison from '@/components/ADempiere/Field/popover/operatorComparison'
-import { DEFAULT_SIZE } from '@/utils/ADempiere/references'
+import LabelField from './LabelField.vue'
 import { evalutateTypeField, fieldIsDisplayed } from '@/utils/ADempiere/dictionaryUtils'
 import { recursiveTreeSearch } from '@/utils/ADempiere/valueUtils.js'
 
@@ -233,7 +221,8 @@ export default {
   name: 'FieldDefinition',
   components: {
     documentStatus,
-    operatorComparison
+    operatorComparison,
+    LabelField
   },
   props: {
     // receives the property that is an object with all the attributes
@@ -472,75 +461,6 @@ export default {
         return 'in-table'
       }
       return ''
-    },
-    sizeFieldResponsive() {
-      if (!this.isDisplayed) {
-        return DEFAULT_SIZE
-      }
-
-      let sizeField = {}
-      if (this.field.size) {
-        // set field size property
-        sizeField = this.field.size
-      }
-      if (this.isEmptyValue(sizeField)) {
-        // set default size
-        sizeField = DEFAULT_SIZE
-      }
-
-      const newSizes = {}
-
-      // in table set max width, used by browser result and tab children of window
-      if (this.inTable) {
-        newSizes.xs = 24
-        newSizes.sm = 24
-        newSizes.md = 24
-        newSizes.lg = 24
-        newSizes.xl = 24
-        return newSizes
-      }
-      if (this.isAdvancedQuery) {
-        newSizes.xs = 24
-        newSizes.sm = 24
-        newSizes.md = 12
-        newSizes.lg = 12
-        newSizes.xl = 12
-        return newSizes
-      }
-
-      if (this.isPanelWindow) {
-        // TODO: Add FieldYesNo and name.length > 12 || 14
-        if (this.field.componentPath === 'FieldTextLong') {
-          return sizeField
-        }
-        // two columns if is mobile or desktop and show record navigation
-        if (this.getWidth <= 768 || (this.getWidth >= 768 && this.field.isShowedRecordNavigation)) {
-          newSizes.xs = 12
-          newSizes.sm = 12
-          newSizes.md = 12
-          newSizes.lg = 12
-          newSizes.xl = 12
-          return newSizes
-        } else if (this.inGroup && this.getWidth >= 992) {
-          newSizes.xs = sizeField.xs
-          newSizes.sm = sizeField.sm * 2
-          if (this.getWidth <= 1199) {
-            newSizes.md = sizeField.md
-          } else {
-            newSizes.md = sizeField.md * 2
-          }
-          if (this.field.groupAssigned !== '') {
-            newSizes.lg = sizeField.lg * 2
-            newSizes.xl = sizeField.xl * 2
-          } else {
-            newSizes.lg = sizeField.lg
-            newSizes.xl = sizeField.xl
-          }
-          return newSizes
-        }
-        return sizeField
-      }
-      return sizeField
     },
     processOrderUuid() {
       return this.$store.getters.getOrders
@@ -782,12 +702,6 @@ export default {
   }
 }
 </script>
-<style scoped>
-.el-form--label-top .el-form-item__label {
-  padding-bottom: 0px !important;
-  display: block;
-}
-</style>
 <style>
   .el-popper {
     padding: 0px;
@@ -882,14 +796,8 @@ export default {
   .el-form-item {
     margin-bottom: 10px !important;
     margin-left: 10px;
+    // this.field.isShowedRecordNavigation
     margin-right: 10px;
-  }
-
-  /**
-   * Reduce the spacing between the form element and its label
-   */
-  .el-form--label-top .el-form-item__label {
-    padding-bottom: 0px !important;
   }
 
   .in-table {
@@ -915,5 +823,8 @@ export default {
   }
   .pre-formatted {
     white-space: pre;
+  }
+  .el-submenu__title {
+    padding: 0;
   }
 </style>
