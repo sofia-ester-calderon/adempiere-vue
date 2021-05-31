@@ -53,37 +53,13 @@
                   :command="option"
                   :divided="true"
                 >
-                  <el-popover
-                    v-if="!isMobile"
-                    placement="top"
-                    trigger="click"
-                    style="padding: 0px;"
-                  >
-                    <component
-                      :is="optionFieldFComponentRender"
-                      v-if="visibleForDesktop"
-                      :field-attributes="contextMenuField.fieldAttributes"
-                      :source-field="contextMenuField.fieldAttributes"
-                      :field-value="contextMenuField.valueField"
-                    />
-                    <el-button slot="reference" type="text" style="color: #606266;">
-                      <div class="contents">
-                        <div v-if="!option.svg" style="margin-right: 5%;padding-top: 3%;">
-                          <i :class="option.icon" style="font-weight: bolder;" />
-                        </div>
-                        <div v-else style="margin-right: 5%">
-                          <svg-icon :icon-class="option.icon" style="margin-right: 5px;" />
-                        </div>
-                        <div>
-                          <span class="contents">
-                            <b class="label">
-                              {{ option.name }}
-                            </b>
-                          </span>
-                        </div>
-                      </div>
-                    </el-button>
-                  </el-popover>
+                  <label-popover
+                    :is-mobile="isMobile"
+                    :option-component="optionFieldFComponentRender"
+                    :visible-for-desktop="visibleForDesktop"
+                    :context-menu-field="contextMenuField"
+                    :option="option"
+                  />
                   <div v-if="isMobile" class="contents">
                     <div v-if="!option.svg" style="margin-right: 5%;padding-top: 3%;">
                       <i :class="option.icon" style="font-weight: bolder;" />
@@ -103,7 +79,7 @@
               </template>
             </el-dropdown-menu>
           </el-dropdown>
-          <el-menu v-else-if="field.panelType !== 'form' && !isMobile" class="el-menu-demo" mode="horizontal" :unique-opened="true" style="z-index: 0" :menu-trigger="triggerMenu" @open="handleOpen" @close="handleClose" @select="handleSelect">
+          <el-menu v-else-if="field.panelType !== 'form'" class="el-menu-demo" mode="horizontal" :unique-opened="true" style="z-index: 0" :menu-trigger="triggerMenu" @open="handleOpen" @close="handleClose" @select="handleSelect">
             <el-submenu index="menu">
               <template slot="title">
                 <label-field :is-mandatory="isMandatory && isEmptyValue(valueField)" :label="field.name" :is-mobile="false" />
@@ -113,42 +89,13 @@
                 :key="key"
                 :index="option.name"
               >
-                <el-popover
-                  v-if="!isMobile"
-                  placement="top"
-                  width="400"
-                  trigger="click"
-                  style="padding: 0px;"
-                  @hide="closePopover"
-                >
-                  <component
-                    :is="optionFieldFComponentRender"
-                    v-if="visibleForDesktop && showPanelFieldOption"
-                    :field-attributes="contextMenuField.fieldAttributes"
-                    :source-field="contextMenuField.fieldAttributes"
-                    :field-value="contextMenuField.valueField"
-                  />
-                  <el-button slot="reference" type="text" style="color: #606266;">
-                    <div class="contents">
-                      <div
-                        v-if="!option.svg"
-                        style="margin-right: 5%;padding-top: 3%;"
-                      >
-                        <i :class="option.icon" style="font-weight: bolder;" />
-                      </div>
-                      <div v-else style="margin-right: 5%;; padding-left: 2%;">
-                        <svg-icon :icon-class="option.icon" style="margin-right: 5px;" />
-                      </div>
-                      <div>
-                        <span class="contents">
-                          <b class="label">
-                            {{ option.name }}
-                          </b>
-                        </span>
-                      </div>
-                    </div>
-                  </el-button>
-                </el-popover>
+                <label-popover
+                  :is-mobile="isMobile"
+                  :option-component="optionFieldFComponentRender"
+                  :visible-for-desktop="visibleForDesktop"
+                  :context-menu-field="contextMenuField"
+                  :option="option"
+                />
                 <div v-if="false" class="contents">
                   <div v-if="!option.svg" style="margin-right: 5%;padding-top: 3%;">
                     <i :class="option.icon" style="font-weight: bolder;" />
@@ -210,6 +157,7 @@
 import documentStatus from '@/components/ADempiere/Field/popover/documentStatus'
 import operatorComparison from '@/components/ADempiere/Field/popover/operatorComparison'
 import LabelField from './LabelField.vue'
+import LabelPopover from './LabelPopover.vue'
 import { evalutateTypeField, fieldIsDisplayed } from '@/utils/ADempiere/dictionaryUtils'
 import { recursiveTreeSearch } from '@/utils/ADempiere/valueUtils.js'
 
@@ -222,7 +170,8 @@ export default {
   components: {
     documentStatus,
     operatorComparison,
-    LabelField
+    LabelField,
+    LabelPopover
   },
   props: {
     // receives the property that is an object with all the attributes
@@ -258,9 +207,6 @@ export default {
   },
   computed: {
     // load the component that is indicated in the attributes of received property
-    showPanelFieldOption() {
-      return this.$store.state.contextMenu.isShowOptionField
-    },
     labelStyle() {
       if (this.field.name.length >= 25) {
         return '35'
@@ -614,16 +560,6 @@ export default {
   },
   methods: {
     recursiveTreeSearch,
-    closePopover() {
-      this.$router.push({
-        name: this.$route.name,
-        query: {
-          ...this.$route.query,
-          typeAction: '',
-          fieldColumnName: ''
-        }
-      }, () => {})
-    },
     handleOpen(key, keyPath) {
       this.triggerMenu = 'hover'
     },
@@ -781,15 +717,6 @@ export default {
 </style>
 
 <style lang="scss">
-  .el-popover {
-    position: fixed;
-  }
-  .custom-tittle-popover {
-    font-size: 14px;
-    font-weight: bold;
-    float: left;
-  }
-
   /**
    * Separation between elements (item) of the form
    */
@@ -826,5 +753,9 @@ export default {
   }
   .el-submenu__title {
     padding: 0;
+  }
+
+  .el-submenu__icon-arrow .el-icon-arrow-down {
+    visibility: hidden;
   }
 </style>
