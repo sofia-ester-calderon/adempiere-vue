@@ -538,6 +538,16 @@ export default {
   },
   methods: {
     recursiveTreeSearch,
+    closePopover() {
+      this.$router.push({
+        name: this.$route.name,
+        query: {
+          ...this.$route.query,
+          typeAction: '',
+          fieldColumnName: ''
+        }
+      }, () => {})
+    },
     handleOpen(key, keyPath) {
       this.triggerMenu = 'hover'
     },
