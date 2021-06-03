@@ -23,7 +23,7 @@
     :rows="rows"
     :class="cssClassStyle"
     :type="typeTextBox"
-    :placeholder="metadata.help"
+    :placeholder="metadata.placeholder"
     :readonly="Boolean(metadata.readonly)"
     :disabled="isDisabled"
     :maxlength="maxLength"

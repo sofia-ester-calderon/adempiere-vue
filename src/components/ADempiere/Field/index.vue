@@ -278,7 +278,6 @@ export default {
           break
       }
       return field
-      // return () => import(`@/components/ADempiere/Field/${this.field.componentPath}`)
     },
     fieldAttributes() {
       return {
@@ -290,7 +289,8 @@ export default {
         readonly: this.isReadOnly,
         displayed: this.isDisplayed,
         disabled: !this.field.isActive,
-        isSelectCreated: this.isSelectCreated
+        isSelectCreated: this.isSelectCreated,
+        placeholder: this.field.help ? this.field.help.slice(0, 50) + '...' : ''
       }
     },
     isDisplayed() {
