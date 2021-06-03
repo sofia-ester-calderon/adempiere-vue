@@ -53,28 +53,7 @@
                   :command="option"
                   :divided="true"
                 >
-                  <label-popover
-                    :is-mobile="isMobile"
-                    :option-component="optionFieldFComponentRender"
-                    :visible-for-desktop="visibleForDesktop"
-                    :context-menu-field="contextMenuField"
-                    :option="option"
-                  />
-                  <div v-if="isMobile" class="contents">
-                    <div v-if="!option.svg" style="margin-right: 5%;padding-top: 3%;">
-                      <i :class="option.icon" style="font-weight: bolder;" />
-                    </div>
-                    <div v-else style="margin-right: 5%">
-                      <svg-icon :icon-class="option.icon" style="margin-right: 5px;" />
-                    </div>
-                    <div>
-                      <span class="contents">
-                        <b class="label">
-                          {{ option.name }}
-                        </b>
-                      </span>
-                    </div>
-                  </div>
+                  <label-popover-option :option="option" :is-mobile="true" />
                 </el-dropdown-item>
               </template>
             </el-dropdown-menu>
@@ -89,28 +68,24 @@
                 :key="key"
                 :index="option.name"
               >
-                <label-popover
-                  :is-mobile="isMobile"
-                  :option-component="optionFieldFComponentRender"
-                  :visible-for-desktop="visibleForDesktop"
-                  :context-menu-field="contextMenuField"
-                  :option="option"
-                />
-                <div v-if="false" class="contents">
-                  <div v-if="!option.svg" style="margin-right: 5%;padding-top: 3%;">
-                    <i :class="option.icon" style="font-weight: bolder;" />
-                  </div>
-                  <div v-else style="margin-right: 5%">
-                    <svg-icon :icon-class="option.icon" style="margin-right: 5px;" />
-                  </div>
-                  <div>
-                    <span class="contents">
-                      <b class="label">
-                        {{ option.name }}
-                      </b>
-                    </span>
-                  </div>
-                </div>
+                <el-popover
+                  placement="top"
+                  width="400"
+                  trigger="click"
+                  style="padding: 0px;"
+                  @hide="closePopover"
+                >
+                  <component
+                    :is="optionFieldFComponentRender"
+                    v-if="visibleForDesktop && showPanelFieldOption"
+                    :field-attributes="contextMenuField.fieldAttributes"
+                    :source-field="contextMenuField.fieldAttributes"
+                    :field-value="contextMenuField.valueField"
+                  />
+                  <el-button slot="reference" type="text" style="color: #606266;">
+                    <label-popover-option :option="option" />
+                  </el-button>
+                </el-popover>
               </el-menu-item>
             </el-submenu>
           </el-menu>
@@ -157,7 +132,7 @@
 import documentStatus from '@/components/ADempiere/Field/popover/documentStatus'
 import operatorComparison from '@/components/ADempiere/Field/popover/operatorComparison'
 import LabelField from './LabelField.vue'
-import LabelPopover from './LabelPopover.vue'
+import LabelPopoverOption from './LabelPopoverOption.vue'
 import { evalutateTypeField, fieldIsDisplayed } from '@/utils/ADempiere/dictionaryUtils'
 import { recursiveTreeSearch } from '@/utils/ADempiere/valueUtils.js'
 
@@ -171,7 +146,7 @@ export default {
     documentStatus,
     operatorComparison,
     LabelField,
-    LabelPopover
+    LabelPopoverOption
   },
   props: {
     // receives the property that is an object with all the attributes
@@ -220,6 +195,9 @@ export default {
     },
     contextMenuField() {
       return this.$store.getters.getFieldContextMenu
+    },
+    showPanelFieldOption() {
+      return this.$store.state.contextMenu.isShowOptionField
     },
     panelContextMenu() {
       return this.$store.state.contextMenu.isShowRightPanel
@@ -710,9 +688,6 @@ export default {
     margin: 0px;
     font-size: 12px;
     text-align: initial;
-  }
-  .contents {
-    display: inline-flex;
   }
 </style>
 
