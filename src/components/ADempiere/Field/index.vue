@@ -729,8 +729,7 @@ export default {
   .el-submenu__title {
     padding: 0;
   }
-
-  .el-submenu__icon-arrow .el-icon-arrow-down {
+  .el-submenu .el-submenu__icon-arrow  {
     visibility: hidden;
   }
 </style>

@@ -33,10 +33,10 @@ export default {
       }
     },
     textStyle() {
-        if (!this.isMobile) {
-            return '';
-        }
-        return {'font-size': '130%', 'margin': '7px'}
+      if (!this.isMobile) {
+        return ''
+      }
+      return { 'font-size': '130%', 'margin': '7px' }
     }
   }
 }
