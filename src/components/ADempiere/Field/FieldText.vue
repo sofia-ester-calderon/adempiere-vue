@@ -110,8 +110,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   .custom-field-text {
     max-height: 34px;
+  }
+  .el-textarea__inner {
+    resize: none !important;
   }
 </style>
