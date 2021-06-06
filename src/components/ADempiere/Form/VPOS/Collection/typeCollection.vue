@@ -68,7 +68,10 @@
                         style="padding-bottom: 20px;"
                       >
                         <p class="total">
-                          <b style="float: right;">
+                          <b v-if="!isEmptyValue(value.multiplyRate)" style="float: right;">
+                            {{ formatPrice(value.multiplyRate, currency.iSOCode) }}
+                          </b>
+                          <b v-else style="float: right;">
                             {{ formatPrice(value.amount, currency.iSOCode) }}
                           </b>
                         </p>
@@ -111,11 +114,19 @@ export default {
       type: Array,
       default: undefined
     },
+    openPanel: {
+      type: Boolean,
+      default: false
+    },
     currency: {
       type: Object,
       default: undefined
     },
     listTypesPayment: {
+      type: Object,
+      default: undefined
+    },
+    listPaymentType: {
       type: Object,
       default: undefined
     },
@@ -140,32 +151,49 @@ export default {
     },
     conevertionAmount() {
       return this.$store.getters.getConvertionPayment
+    },
+    // Validate if there is a payment in a different type of currency to the point
+    paymentCurrency() {
+      return this.$store.getters.posAttributes.currentPointOfSales.currentOrder.listPayments.payments.find(pay => pay.currencyUuid !== this.currency.uuid)
+    }
+  },
+  watch: {
+    listPaymentType(value) {
+      if (!this.isEmptyValue(value.reference)) {
+        this.tenderTypeDisplaye({
+          tableName: value.reference.tableName,
+          query: value.reference.query
+        })
+      }
     }
   },
   created() {
     this.convertingPaymentMethods()
-    if (this.isEmptyValue(this.labelTypesPayment)) {
-      this.tenderTypeDisplaye(this.listTypesPayment)
+    if (this.isEmptyValue(this.labelTypesPayment.reference) && !this.isEmptyValue(this.listPaymentType.reference)) {
+      this.tenderTypeDisplaye({
+        tableName: this.listPaymentType.reference.tableName,
+        query: this.listPaymentType.reference.query
+      })
     }
   },
   methods: {
     formatDate,
     formatPrice,
+    // If there are payments in another currency, search for conversion
     convertingPaymentMethods() {
-      const currencyUuid = this.isAddTypePay.find(pay => pay.currencyUuid !== this.currency.uuid)
-      if (!this.isEmptyValue(currencyUuid)) {
+      if (!this.isEmptyValue(this.paymentCurrency)) {
         requestGetConversionRate({
           conversionTypeUuid: this.currentPointOfSales.conversionTypeUuid,
           currencyFromUuid: this.currency.uuid,
-          currencyToUuid: currencyUuid.currencyUuid
+          currencyToUuid: this.paymentCurrency.currencyUuid
         })
           .then(response => {
-            this.isAddTypePay.forEach(element => {
+            this.$store.getters.posAttributes.currentPointOfSales.currentOrder.listPayments.payments.forEach(element => {
               if (element.currencyUuid !== this.pointOfSalesCurrency.uuid) {
-                element.amountConvertion = element.amount / response.divideRate
+                element.multiplyRate = element.amount / response.multiplyRate
+                element.amountConvertion = element.multiplyRate / response.divideRate
+                element.divideRate = response.multiplyRate
                 element.currencyConvertion = response.currencyTo
-              } else {
-                element.currencyConvertion = {}
               }
             })
             this.$store.commit('setListPayments', {
@@ -228,19 +256,19 @@ export default {
         paymentUuid
       })
     },
-    tenderTypeDisplaye(value) {
-      if (!this.isEmptyValue(value.reference)) {
-        const tenderType = value.reference
-        if (!this.isEmptyValue(tenderType)) {
-          this.$store.dispatch('getLookupListFromServer', {
-            tableName: tenderType.tableName,
-            query: tenderType.query,
-            filters: []
+    // Payment card label
+    tenderTypeDisplaye({
+      tableName,
+      query
+    }) {
+      if (!this.isEmptyValue(tableName)) {
+        this.$store.dispatch('getLookupListFromServer', {
+          tableName,
+          query
+        })
+          .then(response => {
+            this.labelTypesPayment = response
           })
-            .then(response => {
-              this.labelTypesPayment = response
-            })
-        }
       }
     }
   }

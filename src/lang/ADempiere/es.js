@@ -104,8 +104,9 @@ export default {
     code: 'Código',
     issues: 'Asuntos',
     downloadZip: 'descargar  Zip',
-    releaseNotes: 'Nota de Liberaciones'
-
+    releaseNotes: 'Nota de Liberaciones',
+    goRepository: 'Ir al Repositorio',
+    seeDocumentation: 'Ver Documentación'
   },
   permission: {
     addRole: 'Nuevo rol',
@@ -297,6 +298,7 @@ export default {
         addNote: 'Agregar Nota'
       }
     },
+    documentStatus: 'Estatus del Documento',
     callout: {
       error: 'Error En Callout'
     }
@@ -356,6 +358,7 @@ export default {
     sequence: 'Secuencia'
   },
   operators: {
+    compareSearch: 'Comparar la Búsqueda',
     operator: 'Operador de comparación',
     EQUAL: 'Igual a "="',
     NOT_EQUAL: 'Diferente a "<>"',
@@ -414,6 +417,7 @@ export default {
         quantity: 'Cantidad',
         options: 'Opciones',
         editQuantities: 'Editar Cantidades',
+        pin: 'Ingrese Pin',
         remove: 'Eliminar'
       },
       order: {
@@ -443,6 +447,7 @@ export default {
         change: 'Cambio',
         convertAmount: 'Convertir Cantidad',
         fullPayment: 'Cobro Completo',
+        dayRate: 'Tasa del Día',
         TenderType: {
           directDeposit: 'Depósito Directo',
           creditCard: 'Tarjeta de Crédito',
@@ -476,9 +481,51 @@ export default {
       price: 'Precio',
       taxAmount: 'Monto de Impuesto',
       grandTotal: 'Total General',
-      grandTotalConverted: 'Grand Total Convertido',
+      grandTotalConverted: 'Gran Total Convertido',
       quantityAvailable: 'Cantidad Disponible',
       upc: 'Código de Barras'
+    },
+    guideSteps: {
+      productValue: {
+        description: 'Busca el producto segun su Codigo, Nombre o UPC'
+      },
+      businessPartner: {
+        description: 'Mostrar Informacion del Socio de Negocios'
+      },
+      linesTable: {
+        title: 'Lineas de la Orden',
+        description: 'Listado de los Producto de la orden'
+      },
+      buttonPanelLeftPos: {
+        title: 'Mostrar Panel Izquierdo',
+        description: 'Despliega el panel de Opciones del Punto de Venta'
+      },
+      point: {
+        description: 'Muestra el punto de venta actual'
+      },
+      buttonPanelRightPos: {
+        title: 'Mostrar Panel Derecho',
+        description: 'Despliega el panel de catalogo'
+      },
+      fieldListCollection: {
+        title: 'Campos de la Cobranza',
+        description: 'Grupo de Campo el cual posee. Monto, Moneda, Tipo de pago, Banco, Nro Referencia y Fecha'
+      },
+      buttonCollection: {
+        title: 'Herramientas de la Cobranza',
+        description: 'Compuesta por un conjunto de botonera que posee agregar, eliminar y porcesar'
+      },
+      cardCollection: {
+        title: 'Panel de Pago',
+        description: 'En este panel aparece un listado con las tarjeta de los pagos agregados'
+      },
+      infoInvoce: {
+        title: 'Detalle de la Factura',
+        description: 'Informacion de la Factura con el monto total, pendiente, cambio'
+      },
+      toolsPoint: {
+        title: 'Herramientas del Punto de Venta'
+      }
     }
   }
 }

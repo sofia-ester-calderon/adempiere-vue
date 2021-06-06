@@ -71,12 +71,12 @@ export function buildImageFromArrayBuffer({
  */
 export function getImagePath({
   file,
-  width = 300,
-  height = 300,
+  width,
+  height,
   operation = 'fit'
 }) {
-  const url = config.adempiere.images.fullPath
-  const urn = `/img?action=${operation}&width=${width}&height=${height}&url=${file}`
+  const url = config.adempiere.images.url
+  const urn = `img?action=${operation}&width=${width}&height=${height}&url=${file}`
   const uri = `${url}${urn}`
 
   return {

@@ -28,19 +28,21 @@
       >
         <el-form label-position="top" label-width="10px" @submit.native.prevent="notSubmitForm">
           <el-row :gutter="24" style="display: flex;">
-            <el-col :span="14" style="padding-left: 0px; padding-right: 0px;">
+            <el-col :span="colFieldProductCode" style="padding-left: 0px; padding-right: 0px;">
               <template
                 v-for="(field) in fieldsList"
               >
                 <product-info
                   v-if="field.columnName === 'ProductValue'"
+                  id="ProductValue"
                   :key="field.columnName"
                   :metadata="field"
                 />
               </template>
             </el-col>
-            <el-col :span="6" style="padding-left: 0px; padding-right: 0px;">
+            <el-col :span="isEmptyValue(currentOrder) ? 9 : 7" :style="styleTab">
               <business-partner
+                id="BusinessPartner"
                 :parent-metadata="{
                   name: panelMetadata.name,
                   containerUuid: panelMetadata.containerUuid,
@@ -50,20 +52,26 @@
                 :is-disabled="isDisabled"
               />
             </el-col>
-            <el-col :span="2" :style="isShowedPOSKeyLayout ? 'margin-top: 3.4%;padding: 0px;' : 'padding: 0px;margin-top: 2.4%;'">
-              <el-tag
-                v-if="!isEmptyValue(currentOrder.documentStatus.value)"
-                :type="tagStatus(currentOrder.documentStatus.value)"
-              >
-                <span v-if="!isEmptyValue(currentOrder.documentStatus.value)">
-                  {{ currentOrder.documentStatus.name }}
-                </span>
-              </el-tag>
-            </el-col>
-            <el-col :span="2" :style="isShowedPOSKeyLayout ? 'margin-top: 3.4%;' : 'padding: 0px;margin-top: 2.4%;'">
-              <el-button type="primary" plain :disabled="isEmptyValue(this.$route.query.action)" @click="newOrder">
-                {{ $t('form.pos.optionsPoinSales.salesOrder.newOrder') }}
-              </el-button>
+            <el-col :span="isEmptyValue(currentOrder) ? 1 : 4" :style="isShowedPOSKeyLayout ? 'padding: 0px; margin-top: 3.%;' : 'padding: 0px; margin-top: 2.4%;'">
+              <el-form-item>
+                <el-row :gutter="24">
+                  <el-col :span="10" style="padding-left: 0px; padding-right: 0px;">
+                    <el-tag
+                      v-if="!isEmptyValue(currentOrder.documentStatus.value)"
+                      :type="tagStatus(currentOrder.documentStatus.value)"
+                    >
+                      <span v-if="!isEmptyValue(currentOrder.documentStatus.value)">
+                        {{ currentOrder.documentStatus.name }}
+                      </span>
+                    </el-tag>
+                  </el-col>
+                  <el-col :span="14" style="padding-left: 0px; padding-right: 0px;">
+                    <el-button type="primary" plain :disabled="isEmptyValue(this.$route.query.action)" @click="newOrder">
+                      {{ $t('form.pos.optionsPoinSales.salesOrder.newOrder') }}
+                    </el-button>
+                  </el-col>
+                </el-row>
+              </el-form-item>
             </el-col>
           </el-row>
         </el-form>
@@ -72,13 +80,14 @@
         <el-container style="background: white; padding: 0px; height: 100% !important;">
           <el-main style="padding-top: 0px; padding-right: 10px; padding-bottom: 0px; padding-left: 10px;">
             <el-table
+              id="linesOrder"
               ref="linesTable"
               v-shortkey="shortsKey"
               :data="listOrderLine"
               border
-              style="width: 100%; max-width: 100%; background-color: #FFFFFF; font-size: 14px; overflow: auto; color: #606266;"
               highlight-current-row
               fit
+              style="overflow: auto;"
               @current-change="handleCurrentLineChange"
               @shortkey.native="shortcutKeyMethod"
             >
@@ -87,7 +96,7 @@
                 :key="key"
                 :column-key="valueOrder.columnName"
                 :label="valueOrder.label"
-                :width="valueOrder.isNumeric ? 'auto' : '380'"
+                :width="!valueOrder.isNumeric ? valueOrder.size : valueOrder.size"
                 :align="valueOrder.isNumeric ? 'right' : 'left'"
               >
                 <template slot-scope="scope">
@@ -97,122 +106,90 @@
                 </template>
               </el-table-column>
               <el-table-column
-                label=""
-                width="120"
+                :label="$t('form.pos.tableProduct.options')"
+                width="180"
               >
                 <template slot-scope="scope">
-                  <el-dropdown trigger="click" @command="changeLine">
-                    <span class="el-dropdown-link">
-                      {{ $t('form.pos.tableProduct.options') }}
-                      <i class="el-icon-arrow-down el-icon--right" />
-                    </span>
-                    <el-dropdown-menu slot="dropdown" style="padding-bottom: 0px;">
-                      <el-dropdown-item
-                        :command="{
-                          ...scope.row,
-                          option: $t('form.productInfo.productInformation')
-                        }"
-                      >
-                        <el-popover
-                          v-if="!isEmptyValue(currentLineOrder)"
-                          placement="right"
-                          trigger="click"
-                          :title="$t('form.productInfo.productInformation')"
-                        >
-                          <el-form
-                            label-position="top"
-                            label-width="60px"
-                            style="float: right; display: flex; line-height: 30px;"
-                          >
-                            <el-row :gutter="24">
-                              <el-col :span="4">
-                                <div>
-                                  <el-avatar shape="square" :size="100" src="https://#" @error="true">
-                                    <el-image>
-                                      <div slot="error" class="image-slot">
-                                        <i class="el-icon-picture-outline" />
-                                      </div>
-                                    </el-image>
-                                  </el-avatar>
+                  <el-popover
+                    v-if="!isEmptyValue(listOrderLine)"
+                    placement="right"
+                    trigger="click"
+                    :title="$t('form.productInfo.productInformation')"
+                  >
+                    <el-form
+                      label-position="top"
+                      style="float: right; display: flex; line-height: 30px;"
+                    >
+                      <el-row :gutter="24">
+                        <el-col :span="4">
+                          <div>
+                            <el-avatar shape="square" :size="100" src="https://#" @error="true">
+                              <el-image>
+                                <div slot="error" class="image-slot">
+                                  <i class="el-icon-picture-outline" />
                                 </div>
-                              </el-col>
-                              <el-col :span="10">
-                                {{ $t('form.productInfo.code') }}: <b>{{ currentLineOrder.product.value }}</b><br>
-                                {{ $t('form.productInfo.name') }}: <b>{{ currentLineOrder.product.name }}</b><br>
-                                {{ $t('form.productInfo.description') }}: <b>{{ currentLineOrder.product.description }}</b><br>
-                              </el-col>
-                              <el-col :span="10">
-                                <div style="float: right">
-                                  {{ $t('form.productInfo.price') }}:
-                                  <b>{{ formatPrice(currentLineOrder.product.priceStandard, pointOfSalesCurrency.iSOCode) }}</b>
-                                  <br>
-                                  {{ $t('form.productInfo.taxAmount') }}:
-                                  <b>{{ currentLineOrder.taxIndicator }}</b>
-                                  <br>
-                                  {{ $t('form.productInfo.quantityAvailable') }}:
-                                  <b>{{ formatQuantity(currentLineOrder.quantityOrdered) }}</b>
-                                </div>
-                              </el-col>
-                            </el-row>
-                          </el-form>
-                          <el-button slot="reference" type="text" style="display: flex;width: 110%;padding-bottom: 5%;padding-top: 5%;">
-                            <i class="el-icon-info" /> {{ $t('form.productInfo.productInformation') }}
-                          </el-button>
-                        </el-popover>
-                      </el-dropdown-item>
-                      <el-dropdown-item
-                        :command="{
-                          ...scope.row,
-                          option: $t('form.pos.tableProduct.editQuantities')
-                        }"
-                      >
-                        <el-popover
-                          placement="right"
-                          trigger="click"
-                          :title="$t('form.pos.tableProduct.editQuantities')"
-                          width="600"
-                          @hide="showFieldLine = false"
-                        >
-                          <field-line
-                            :data-line="scope.row"
-                            :show-field="showFieldLine"
-                            :current-line="currentOrderLine"
-                          />
-                          <el-button
-                            slot="reference"
-                            type="text"
-                            :disabled="isDisabled"
-                            @click="showFieldLine = !showFieldLine"
-                          >
-                            <i class="el-icon-edit" /> {{ $t('form.pos.tableProduct.editQuantities') }}
-                          </el-button>
-                        </el-popover>
-                      </el-dropdown-item>
-                      <el-button type="danger" icon="el-icon-delete" class="delete-buttom" :disabled="isDisabled" plain @click="deleteOrderLine(scope.row)">
-                        {{ $t('form.pos.tableProduct.remove') }}
-                      </el-button>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                              </el-image>
+                            </el-avatar>
+                          </div>
+                        </el-col>
+                        <el-col :span="10">
+                          {{ $t('form.productInfo.code') }}: <b>{{ scope.row.product.value }}</b><br>
+                          {{ $t('form.productInfo.name') }}: <b>{{ scope.row.product.name }}</b><br>
+                          {{ $t('form.productInfo.description') }}: <b>{{ scope.row.product.description }}</b><br>
+                        </el-col>
+                        <el-col :span="10">
+                          <div style="float: right">
+                            {{ $t('form.productInfo.price') }}:
+                            <b>{{ formatPrice(scope.row.product.priceStandard, pointOfSalesCurrency.iSOCode) }}</b>
+                            <br>
+                            {{ $t('form.productInfo.taxAmount') }}:
+                            <b>{{ scope.row.taxIndicator }}</b>
+                            <br>
+                            {{ $t('form.productInfo.quantityAvailable') }}:
+                            <b>{{ formatQuantity(scope.row.quantityOrdered) }}</b>
+                          </div>
+                        </el-col>
+                      </el-row>
+                    </el-form>
+                    <el-button slot="reference" type="primary" icon="el-icon-info" size="mini" style="margin-right: 3%;" />
+                  </el-popover>
+                  <el-popover
+                    placement="right"
+                    trigger="click"
+                    :title="$t('form.pos.tableProduct.editQuantities')"
+                    width="600"
+                    @hide="showFieldLine = false"
+                  >
+                    <field-line
+                      :data-line="scope.row"
+                      :show-field="showFieldLine"
+                      :current-line="currentLineOrder"
+                    />
+                    <el-button slot="reference" type="success" icon="el-icon-edit" size="mini" style="margin-right: 3%;" @click="showEditLine(scope.row)" />
+                  </el-popover>
+                  <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteOrderLine(scope.row)" />
                 </template>
               </el-table-column>
             </el-table>
           </el-main>
 
-          <el-footer class="footer-table">
+          <el-footer :class="classOrderFooter">
             <div class="keypad">
-              <el-button type="primary" icon="el-icon-top" :disabled="isDisabled" @click="arrowTop" />
-              <el-button type="primary" icon="el-icon-bottom" :disabled="isDisabled" @click="arrowBottom" />
-              <el-button v-show="isValidForDeleteLine(listOrderLine)" type="danger" icon="el-icon-delete" :disabled="isDisabled" @click="deleteOrderLine(currentOrderLine)" />
-              <el-button
-                v-show="isValidForDeleteLine(listOrderLine)"
-                type="success"
-                icon="el-icon-bank-card"
-                @click="openCollectionPanel"
-              >
-                {{ labelButtonCollections }}
-              </el-button>
+              <span id="toolPoint">
+                <el-button type="primary" icon="el-icon-top" :disabled="isDisabled" @click="arrowTop" />
+                <el-button type="primary" icon="el-icon-bottom" :disabled="isDisabled" @click="arrowBottom" />
+                <el-button v-show="isValidForDeleteLine(listOrderLine)" type="danger" icon="el-icon-delete" :disabled="isDisabled" @click="deleteOrderLine(currentOrderLine)" />
+                <el-button
+                  v-show="isValidForDeleteLine(listOrderLine)"
+                  type="success"
+                  icon="el-icon-bank-card"
+                  @click="openCollectionPanel"
+                >
+                  {{ labelButtonCollections }}
+                </el-button>
+              </span>
               <br>
-              <p>
+              <p id="point">
                 <el-dropdown
                   v-if="!isEmptyValue(currentPointOfSales)"
                   trigger="click"
@@ -235,6 +212,27 @@
                 </el-dropdown>
               </p>
             </div>
+            <span v-if="isMobile" style="float: right;padding-right: 3%;">
+              <p class="total">{{ $t('form.pos.order.order') }}: <b class="order-info">{{ currentOrder.documentNo }}</b></p>
+              <p class="total">
+                {{ $t('form.pos.order.date') }}:
+                <b class="order-info">
+                  {{ orderDate }}
+                </b>
+              </p>
+              <p class="total">{{ $t('form.pos.order.type') }}:<b class="order-info">{{ currentOrder.documentType.name }}</b></p>
+              <p class="total">
+                {{ $t('form.pos.order.itemQuantity') }}
+                <b class="order-info">
+                  {{ getItemQuantity }}
+                </b>
+              </p>
+              <p class="total">
+                {{ $t('form.pos.order.numberLines') }}
+                <b class="order-info">
+                  {{ numberOfLines }}
+                </b></p>
+            </span>
             <span style="float: right;">
               <p class="total">{{ $t('form.pos.order.seller') }}:<b style="float: right;">
                 {{ currentOrder.salesRepresentative.name }}
@@ -250,12 +248,15 @@
                   <el-popover
                     :v-model="seeConversion"
                     placement="top-start"
+                    trigger="click"
+                    @hide="closeConvertion"
                   >
                     <convert-amount
                       v-show="seeConversion"
                       :convert="multiplyRate"
                       :amount="currentOrder.grandTotal"
                       :currency="pointOfSalesCurrency"
+                      :is-open="seeConversion"
                     />
                     <el-button slot="reference" type="text" style="color: #000000;font-weight: 604!important;font-size: 100%;" @click="seeConversion = !seeConversion">
                       {{ formatPrice(currentOrder.grandTotal, pointOfSalesCurrency.iSOCode) }}
@@ -264,7 +265,7 @@
                 </b>
               </p>
             </span>
-            <span style="float: right;padding-right: 3%;">
+            <span v-if="!isMobile" style="float: right;padding-right: 3%;">
               <p class="total">{{ $t('form.pos.order.order') }}: <b class="order-info">{{ currentOrder.documentNo }}</b></p>
               <p class="total">
                 {{ $t('form.pos.order.date') }}:
@@ -289,8 +290,17 @@
         </el-container>
       </el-main>
     </el-container>
-    <div style="position: relative;padding-top: 30vh; z-index: 100;">
+    <div v-if="isMobile && isShowedPOSKeyLayout" :style="classButtomRight">
       <el-button
+        :circle="true"
+        type="primary"
+        :icon="isShowedPOSKeyLayout ? 'el-icon-arrow-left' : 'el-icon-arrow-right'"
+        @click="isShowedPOSKeyLayout = !isShowedPOSKeyLayout"
+      />
+    </div>
+    <div v-if="!isMobile" :style="classButtomRight">
+      <el-button
+        id="buttonPanelRightPos"
         :circle="true"
         type="primary"
         :icon="isShowedPOSKeyLayout ? 'el-icon-arrow-right' : 'el-icon-arrow-left'"
@@ -344,6 +354,42 @@ export default {
     }
   },
   computed: {
+    isMobile() {
+      return this.$store.state.app.device === 'mobile'
+    },
+    classOrderFooter() {
+      if (this.isMobile) {
+        return 'footer-mobile'
+      }
+      return 'footer-table'
+    },
+    classButtomRight() {
+      if (this.isMobile) {
+        if (this.$store.getters.getIsShowPOSOptions) {
+          return 'position: fixed'
+        }
+        return 'position: absolute;top: 34%;z-index: 100;right: 0;'
+      }
+      return 'position: relative;padding-top: 30vh; z-index: 100;'
+    },
+    colFieldBusinessPartner() {
+      if (this.isMobile) {
+        return 12
+      }
+      if (this.isEmptyValue(this.currentOrder)) {
+        return 9
+      }
+      return 7
+    },
+    colFieldProductCode() {
+      if (this.isMobile) {
+        return 12
+      }
+      if (this.isEmptyValue(this.currentOrder)) {
+        return 14
+      }
+      return 11
+    },
     shortsKey() {
       return {
         popoverConvet: ['ctrl', 'x']
@@ -360,9 +406,9 @@ export default {
     styleTab() {
       const isShowedPOSOptions = this.$store.getters.getIsShowPOSOptions
       if (this.isShowedPOSKeyLayout || isShowedPOSOptions) {
-        return 'adding-left: 0px; padding-right: 0px; padding-top: 2.5%;margin-right: 1%;float: right;'
+        return 'adding-left: 0px; padding-left: 0px; padding-right: 0px; padding: 0px; '
       }
-      return 'padding-left: 0px; padding-right: 0px; padding-top: 2.2%;margin-right: 1%;float: right;'
+      return 'padding-left: 0px; padding-right: 0px; '
     },
     orderDate() {
       if (this.isEmptyValue(this.currentOrder) || this.isEmptyValue(this.currentOrder.dateOrdered)) {
@@ -465,8 +511,8 @@ export default {
       return this.currentOrder.lineOrder
     },
     currentLineOrder() {
-      console.log(this.$store.state['pointOfSales/orderLine/index'].line)
-      return this.$store.state['pointOfSales/orderLine/index'].line
+      const line = this.$store.state['pointOfSales/orderLine/index'].line
+      return line
     }
   },
   mounted() {
@@ -478,12 +524,14 @@ export default {
     formatDate,
     formatPrice,
     formatQuantity,
+    closeConvertion() {
+      this.seeConversion = false
+    },
     openCollectionPanel() {
-      this.isShowedPOSKeyLayout = !this.isShowedPOSKeyLayout
+      this.isShowedPOSKeyLayout = this.isMobile ? !this.isShowedPOSKeyLayout : true
       this.$store.commit('setShowPOSCollection', true)
       const orderUuid = this.$route.query.action
       this.$store.dispatch('listPayments', { orderUuid })
-      this.isShowedPOSKeyLaout = !this.isShowedPOSKeyLaout
       this.$store.commit('setShowPOSOptions', false)
     },
     open() {
@@ -557,6 +605,10 @@ export default {
         this.currentOrderLine = this.listOrderLine[this.currentTable]
       }
     },
+    showEditLine(line) {
+      this.$store.commit('setLine', line)
+      this.showFieldLine = !this.showFieldLine
+    },
     arrowBottom() {
       const top = this.listOrderLine.length - 1
       if (this.currentTable < top) {
@@ -583,6 +635,12 @@ export default {
   .el-col-6 {
     padding-right: 0px !important;
     padding-left: 0px !important;
+  }
+  .footer-mobile {
+    padding: 0px;
+    height: auto !important;
+    overflow: auto;
+    display: contents;
   }
   .footer-table {
     padding-top: 0px;

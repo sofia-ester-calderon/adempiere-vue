@@ -104,7 +104,9 @@ export default {
     code: 'Code',
     issues: 'Issues',
     downloadZip: 'Download Zip',
-    releaseNotes: 'Release Notes'
+    releaseNotes: 'Release Notes',
+    goRepository: 'go to repository',
+    seeDocumentation: 'See documentation'
   },
   permission: {
     addRole: 'New Role',
@@ -321,6 +323,7 @@ export default {
         addNote: 'Add Note'
       }
     },
+    documentStatus: 'Document Status',
     callout: {
       error: 'Error In Callout'
     }
@@ -380,6 +383,7 @@ export default {
     sequence: 'Sequence'
   },
   operators: {
+    compareSearch: 'Compare the Search',
     operator: 'Comparison operator',
     EQUAL: 'Equal to "="',
     NOT_EQUAL: 'Not equal to "<>"',
@@ -438,6 +442,7 @@ export default {
         quantity: 'Quantity',
         options: 'Options',
         editQuantities: 'Edit Quantities',
+        pin: 'Insert Pin',
         remove: 'Remove'
       },
       order: {
@@ -467,6 +472,7 @@ export default {
         change: 'Change',
         convertAmount: 'Convert Quantity',
         fullPayment: 'Full Payment',
+        dayRate: 'Day Rate',
         TenderType: {
           directDeposit: 'Direct Deposit',
           creditCard: 'Credit Card',
@@ -503,6 +509,48 @@ export default {
       grandTotalConverted: 'Grand Total Converted',
       quantityAvailable: 'Quantity Avalible',
       upc: 'UPC / EAN'
+    },
+    guideSteps: {
+      productValue: {
+        description: 'Search for the product by Product Code, Name or UPC'
+      },
+      businessPartner: {
+        description: 'Show Business Partner Information'
+      },
+      linesTable: {
+        title: 'Order Lines',
+        description: 'Order Product Listing'
+      },
+      buttonPanelLeftPos: {
+        title: 'Show Left Panel',
+        description: 'Display the Point of Sale Options panel'
+      },
+      point: {
+        description: 'Displays the current point of sale'
+      },
+      buttonPanelRightPos: {
+        title: 'Show Right Panel',
+        description: 'Displays the catalog panel'
+      },
+      fieldListCollection: {
+        title: 'Collection Fields',
+        description: 'Field Group which has. Amount, Currency, Payment Type, Bank, Reference No. and Date'
+      },
+      buttonCollection: {
+        title: 'Collection Tools',
+        description: 'Composed of a set of buttons that allows you to add, delete and process'
+      },
+      cardCollection: {
+        title: 'Payment Panel',
+        description: 'In this panel you can see a list with the cards of the added payments'
+      },
+      infoInvoce: {
+        title: 'Invoice Detail',
+        description: 'Invoice information with total amount, pending, change'
+      },
+      toolsPoint: {
+        title: 'Point of Sale Tools'
+      }
     }
   }
 }

@@ -288,8 +288,8 @@ import {
   withdrawal,
   createNewReturnOrder,
   cashClosing,
-  requestDeleteOrder,
-  requestCreateOrder,
+  deleteOrder,
+  createOrder,
   processOrder
 } from '@/api/ADempiere/form/point-of-sales.js'
 import ModalDialog from '@/components/ADempiere/Dialog'
@@ -389,8 +389,8 @@ export default {
       processOrder({
         posUuid,
         orderUuid: this.$route.query.action,
-        createPayments: !this.isEmptyValue(this.currentOrder.listPayments),
-        payments: this.currentOrder.listPayments
+        createPayments: false,
+        payments: []
       })
         .then(response => {
           this.$store.dispatch('reloadOrder', response.uuid)
@@ -472,10 +472,10 @@ export default {
         value: this.currentOrder.id
       }]
       this.$store.dispatch('addParametersProcessPos', parametersList)
-      requestCreateOrder({
+      createOrder({
         posUuid,
         customerUuid: this.currentOrder.businessPartner.uuid,
-        salesRepresentativeUuid: this.currentPointOfSales.salesRepresentative.uuid
+        salesRepresentativeUuid: this.currentOrder.salesRepresentative.uuid
       })
         .then(order => {
           this.$store.dispatch('currentOrder', order)
@@ -520,7 +520,7 @@ export default {
     },
     deleteOrder() {
       this.$store.dispatch('updateOrderPos', true)
-      requestDeleteOrder({
+      deleteOrder({
         orderUuid: this.$route.query.action
       })
         .then(response => {

@@ -16,7 +16,7 @@
 
 import {
   findProduct,
-  requestUpdateOrderLine
+  updateOrderLine
 } from '@/api/ADempiere/form/point-of-sales.js'
 import {
   formatDate,
@@ -269,22 +269,21 @@ export default {
       if (this.isEmptyValue(orderUuid)) {
         const posUuid = this.currentPointOfSales.uuid
         let customerUuid = this.$store.getters.getValueOfField({
-          containerUuid: this.containerUuid,
+          containerUuid: this.metadata.containerUuid,
           columnName: 'C_BPartner_ID_UUID'
         })
         const id = this.$store.getters.getValueOfField({
-          containerUuid: this.containerUuid,
+          containerUuid: this.metadata.containerUuid,
           columnName: 'C_BPartner_ID'
         })
         if (this.isEmptyValue(customerUuid) || id === 1000006) {
           customerUuid = this.currentPointOfSales.templateBusinessPartner.uuid
         }
         // user session
-        // alert(name)
         this.$store.dispatch('createOrder', {
           posUuid,
           customerUuid,
-          salesRepresentativeUuid: this.currentPointOfSales.templateBusinessPartner.uuid
+          salesRepresentativeUuid: this.currentPointOfSales.salesRepresentative.uuid
         })
           .then(response => {
             // this.order = response
@@ -364,11 +363,8 @@ export default {
             case 'QtyEntered':
             case 'PriceEntered':
             case 'Discount':
-              if (!this.isEmptyValue(this.currentOrderLine)) {
-                this.updateOrderLine({
-                  ...mutation.payload,
-                  line: this.$store.state['pointOfSales/orderLine/index'].line
-                })
+              if (!this.isEmptyValue(this.$store.state['pointOfSales/orderLine/index'].line)) {
+                this.updateOrderLine(mutation.payload)
               }
               break
           }
@@ -408,7 +404,7 @@ export default {
           this.arrowBottom()
           break
         case 'plus':
-          requestUpdateOrderLine({
+          updateOrderLine({
             orderLineUuid: this.currentOrderLine.uuid,
             quantity: this.listOrderLine[this.currentTable].quantity + 1
           })
@@ -427,7 +423,7 @@ export default {
 
           break
         case 'minus':
-          requestUpdateOrderLine({
+          updateOrderLine({
             orderLineUuid: this.currentOrderLine.uuid,
             quantity: this.listOrderLine[this.currentTable].quantity - 1
           })

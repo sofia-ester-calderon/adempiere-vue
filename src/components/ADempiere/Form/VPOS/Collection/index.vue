@@ -19,6 +19,7 @@
   <el-container style="background: white; height: 100% !important;">
     <el-main style="background: white; padding: 0px; height: 100% !important; overflow: hidden">
       <el-container style="background: white; padding: 0px; height: 100% !important;">
+        <!-- Collection container top panel -->
         <el-header style="height: auto; padding-bottom: 10px; padding-right: 0px; padding-left: 0px">
           <el-card class="box-card" style="padding-left: 0px; padding-right: 0px">
             <div slot="header" class="clearfix">
@@ -59,14 +60,22 @@
                 </b>
               </p>
               <p class="total">
-                <b>Tasa del Día: </b>
+                <b>{{ $t('form.pos.collect.dayRate') }}:</b>
+                <!-- Conversion rate to date -->
                 <b v-if="!isEmptyValue(dateRate)" style="float: right;">
-                  {{
-                    dateRate.iSOCode
-                  }}
-                  {{
-                    formatConversionCurrenty(dateRate.amountConvertion)
-                  }}
+                  <span v-if="formatConversionCurrenty(dateRate.amountConvertion) > 100">
+                    {{
+                      formatPrice(formatConversionCurrenty(dateRate.amountConvertion), dateRate.iSOCode)
+                    }}
+                  </span>
+                  <span v-else>
+                    {{
+                      dateRate.iSOCode
+                    }}
+                    {{
+                      formatConversionCurrenty(dateRate.amountConvertion)
+                    }}
+                  </span>
                 </b>
               </p>
             </div>
@@ -80,13 +89,14 @@
                 style="float: right; display: flex; line-height: 10px;"
                 :disabled="isDisabled"
               >
-                <el-row>
+                <el-row id="fieldListCollection">
                   <el-col v-for="(field, index) in fieldsList" :key="index" :span="8">
+                    <!-- Add selected currency symbol -->
                     <field-definition
                       :key="field.columnName"
                       :metadata-field="field.columnName === 'PayAmt' ? {
                         ...field,
-                        labelCurrency: isEmptyValue($store.getters.getFieldCuerrency) ? pointOfSalesCurrency : $store.getters.getFieldCuerrency
+                        labelCurrency: dateRate
                       } : field"
                     />
                   </el-col>
@@ -94,20 +104,23 @@
               </el-form>
             </div>
           </el-card>
-          <samp style="float: right;padding-right: 10px;">
+          <samp id="buttonCollection" style="float: right;padding-right: 10px;">
             <el-button type="danger" icon="el-icon-close" @click="exit" />
             <el-button type="info" icon="el-icon-minus" :disabled="isDisabled" @click="undoPatment" />
             <el-button type="primary" :disabled="validPay || addPay || isDisabled" icon="el-icon-plus" @click="addCollectToList(paymentBox)" />
             <el-button type="success" :disabled="validateCompleteCollection || isDisabled" icon="el-icon-shopping-cart-full" @click="completePreparedOrder(listPayments)" />
           </samp>
         </el-header>
+        <!-- Panel where they show the payments registered from the collection container -->
         <el-main style="padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px;">
           <type-collection
             v-if="!updateOrderPaymentPos"
+            id="cardCollection"
             :is-add-type-pay="listPayments"
             :currency="pointOfSalesCurrency"
             :list-types-payment="fieldsList[2]"
             :is-loaded="isLoadedPayments"
+            :list-payment-type="fieldsPaymentType"
           />
           <div
             v-else
@@ -119,8 +132,8 @@
             class="view-loading"
           />
         </el-main>
-
-        <el-footer height="auto" style="padding-left: 0px; padding-right: 0px;">
+        <!-- Collection container bottom panel -->
+        <el-footer id="infoInvoce" height="auto" style="padding-left: 0px; padding-right: 0px;">
           <el-row :gutter="24" style="background-color: rgb(245, 247, 250);">
             <el-col :span="24">
               <span>
@@ -215,7 +228,7 @@ import posMixin from '@/components/ADempiere/Form/VPOS/posMixin.js'
 import fieldsListCollection from './fieldsListCollection.js'
 import typeCollection from '@/components/ADempiere/Form/VPOS/Collection/typeCollection'
 import convertAmount from '@/components/ADempiere/Form/VPOS/Collection/convertAmount/index'
-import { formatDate, formatPrice } from '@/utils/ADempiere/valueFormat.js'
+import { formatPrice } from '@/utils/ADempiere/valueFormat.js'
 import { processOrder } from '@/api/ADempiere/form/point-of-sales.js'
 import { FIELDS_DECIMALS } from '@/utils/ADempiere/references'
 
@@ -480,6 +493,9 @@ export default {
           return currency
         }
       })
+    },
+    fieldsPaymentType() {
+      return this.fieldsList[2]
     }
   },
   watch: {
@@ -500,6 +516,7 @@ export default {
         this.$store.dispatch('conversionDivideRate', {
           conversionTypeUuid: this.currentPointOfSales.conversionTypeUuid,
           currencyFromUuid: this.pointOfSalesCurrency.uuid,
+          conversionDate: this.formatDate(new Date()),
           currencyToUuid: value
         })
       }
@@ -533,6 +550,18 @@ export default {
           value: this.pending
         })
       }
+    },
+    fieldsPaymentType(value) {
+      const displayPaymentType = this.$store.getters.getValueOfField({
+        containerUuid: 'Collection',
+        columnName: 'DisplayColumn_PaymentType'
+      })
+      if (!this.isEmptyValue(value.reference) && this.isEmptyValue(displayPaymentType)) {
+        this.$store.dispatch('getLookupListFromServer', {
+          tableName: value.reference.tableName,
+          query: value.reference.query
+        })
+      }
     }
   },
   created() {
@@ -541,7 +570,6 @@ export default {
     this.defaultValueCurrency()
   },
   methods: {
-    formatDate,
     formatNumber({ displayType, number }) {
       let fixed = 0
       // Amount, Costs+Prices, Number
@@ -555,7 +583,11 @@ export default {
       let sum = 0
       if (cash) {
         cash.forEach((pay) => {
-          sum += pay.amount
+          if (!this.isEmptyValue(pay.divideRate)) {
+            sum += pay.amountConvertion / pay.divideRate
+          } else {
+            sum += pay.amount
+          }
         })
       }
       return sum
@@ -812,6 +844,18 @@ export default {
           this.$store.dispatch('updateOrderPos', false)
           this.$store.dispatch('updatePaymentPos', false)
         })
+    },
+    formatDate(date) {
+      let month = '' + (date.getMonth() + 1)
+      let day = '' + date.getDate()
+      const year = date.getFullYear()
+      if (month.length < 2) {
+        month = '0' + month
+      }
+      if (day.length < 2) {
+        day = '0' + day
+      }
+      return [year, month, day].join('-')
     },
     subscribeChanges() {
       return this.$store.subscribe((mutation, state) => {

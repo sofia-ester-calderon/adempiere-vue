@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import {
-  requestListOrderLines
+  listOrderLines
 } from '@/api/ADempiere/form/point-of-sales.js'
+import { isEmptyValue } from '@/utils/ADempiere/valueUtils.js'
 import { showMessage } from '@/utils/ADempiere/notification.js'
 /**
  * Order Line Actions
@@ -26,7 +27,10 @@ export default {
     commit('setListOrderLine', params)
   },
   listOrderLinesFromServer({ commit }, orderUuid) {
-    requestListOrderLines({
+    if (isEmptyValue(orderUuid)) {
+      return
+    }
+    listOrderLines({
       orderUuid
     })
       .then(response => {
