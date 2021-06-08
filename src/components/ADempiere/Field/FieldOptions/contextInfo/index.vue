@@ -17,14 +17,14 @@
 -->
 <template>
   <div>
-    <el-card class="box-card">
+    <el-card class="box-card" style="padding: 1%;">
       <div slot="header" class="clearfix">
         <span>
           {{ $t('field.field') }}
           <b> {{ fieldAttributes.name }} </b>
         </span>
       </div>
-      <el-scrollbar wrap-class="scroll-child" style="padding: 2%;">
+      <el-scrollbar wrap-class="scroll-child">
         <el-form ref="form" label-position="top" label-width="120px" style="overflow: auto;" @submit.native.prevent="notSubmitForm">
           <el-form-item v-if="!isEmptyValue(messageText)" :label="$t('field.contextInfo')">
             {{ messageText }}
