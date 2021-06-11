@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import { DEFAULT_SIZE } from '@/utils/ADempiere/references'
 import { evalutateTypeField, fieldIsDisplayed } from '@/utils/ADempiere/dictionaryUtils'
 import FieldOptions from '@/components/ADempiere/Field/FieldOptions'
 
@@ -268,7 +267,7 @@ export default {
         return 'in-table'
       }
       return ''
-    },
+    }
   },
   watch: {
     metadataField(value) {
