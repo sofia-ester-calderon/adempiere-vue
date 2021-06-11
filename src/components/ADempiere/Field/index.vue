@@ -267,7 +267,7 @@ export default {
         return 'in-table'
       }
       return ''
-    }
+    },
   },
   watch: {
     metadataField(value) {
