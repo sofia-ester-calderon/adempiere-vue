@@ -79,12 +79,12 @@
 
     .el-row::before {
       display: block;
-      height: 0 !important;
+      height: 0;
     }
 
     .el-row::after {
       display: block;
-      height: 0 !important;
+      height: 0;
     }
 
     // menu hover
