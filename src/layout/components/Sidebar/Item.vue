@@ -53,12 +53,22 @@ export default {
 
 .item-wrapper {
   white-space: break-spaces;
-  line-height: 20px;
   height: auto;
-  margin: 18px 23px 18px 0;
 }
 
 .item-title {
   margin: 0 0 0 7px;
 }
+</style>
+
+<style>
+.el-row::before {
+      display: block;
+      height: 0;
+    }
+
+    .el-row::after {
+      display: block;
+      height: 0;
+    }
 </style>

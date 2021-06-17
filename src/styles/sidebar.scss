@@ -77,16 +77,6 @@
       height: auto !important;
     }
 
-    .el-row::before {
-      display: block;
-      height: 0;
-    }
-
-    .el-row::after {
-      display: block;
-      height: 0;
-    }
-
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
