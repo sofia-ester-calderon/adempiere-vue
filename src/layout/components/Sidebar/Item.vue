@@ -1,11 +1,10 @@
 <template>
   <el-row class="item-wrapper">
-    <el-col :span="3">
+    <el-col :span="3" :style="iconMargin">
       <i v-if="icon.includes('el-icon')" class="icon sub-el-icon" />
       <svg-icon v-else :icon-class="icon" />
     </el-col>
-    <el-col :span="21">
-
+    <el-col v-if="!isCollapsed" :span="21">
       <p class="item-title">{{ title }}</p>
     </el-col>
   </el-row>
@@ -22,6 +21,25 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    isCollapsed: {
+      type: Boolean,
+      default: false
+    },
+    hasChildItems: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    iconMargin() {
+      if (!this.isCollapsed) {
+        return ''
+      }
+      if (this.hasChildItems) {
+        return 'margin-left: -4px;'
+      }
+      return 'margin-left: 18px;'
     }
   }
 }

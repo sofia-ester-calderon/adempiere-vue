@@ -11,6 +11,7 @@
           <item
             :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
             :title="generateTitle(onlyOneChild.meta.title)"
+            :is-collapsed="isCollapsed"
           />
         </el-menu-item>
       </app-link>
@@ -18,7 +19,13 @@
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="generateTitle(item.meta.title)" />
+        <item
+          v-if="item.meta"
+          :icon="item.meta && item.meta.icon"
+          :title="generateTitle(item.meta.title)"
+          :is-collapsed="isCollapsed"
+          :has-child-items="true"
+        />
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -58,6 +65,10 @@ export default {
     basePath: {
       type: String,
       default: ''
+    },
+    isCollapsed: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -69,13 +80,7 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar'
-    ]),
-    isCollapse() {
-      if (this.sidebar.opened) {
-        return 'right'
-      }
-      return 'top'
-    }
+    ])
   },
   methods: {
     hasOneShowingChild(children = [], parent) {
