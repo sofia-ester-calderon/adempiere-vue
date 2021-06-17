@@ -176,5 +176,19 @@ export default defineComponent({
       top: -7 !important;
     }
   }
+
+  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
+    content: "";
+  }
+
+  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::before {
+        position: absolute;
+    right: 20px;
+    font-family: "element-icons";
+    content: "";
+    font-size: 12px;
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+  }
 }
 </style>
