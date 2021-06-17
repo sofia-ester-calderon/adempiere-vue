@@ -46,29 +46,28 @@ export default {
 </script>
 
 <style scoped>
-.sub-el-icon {
-  width: 1em;
-  height: 1em;
-}
+  .sub-el-icon {
+    width: 1em;
+    height: 1em;
+  }
 
-.item-wrapper {
-  white-space: break-spaces;
-  height: auto;
-}
+  .item-wrapper {
+    white-space: break-spaces;
+  }
 
-.item-title {
-  margin: 0 0 0 7px;
-}
+  .item-title {
+    margin: 0 0 0 7px;
+  }
 </style>
 
 <style>
-.el-row::before {
-      display: block;
-      height: 0;
-    }
+  .el-row::before {
+    display: block;
+    height: 0;
+  }
 
-    .el-row::after {
-      display: block;
-      height: 0;
-    }
+  .el-row::after {
+    display: block;
+    height: 0;
+  }
 </style>
