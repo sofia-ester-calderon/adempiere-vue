@@ -53,6 +53,9 @@ export default {
 
   .item-wrapper {
     white-space: break-spaces;
+    line-height: 20px;
+    height: auto;
+    padding: 18px 23px 18px 0;  
   }
 
   .item-title {
