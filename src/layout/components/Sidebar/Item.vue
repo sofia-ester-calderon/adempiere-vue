@@ -4,7 +4,7 @@
       <i v-if="icon.includes('el-icon')" class="icon sub-el-icon" />
       <svg-icon v-else :icon-class="icon" />
     </el-col>
-    <el-col v-if="!isCollapsed" :span="21">
+    <el-col :span="21">
       <p class="item-title">{{ title }}</p>
     </el-col>
   </el-row>
@@ -22,24 +22,16 @@ export default {
       type: String,
       default: ''
     },
-    isCollapsed: {
-      type: Boolean,
-      default: false
-    },
-    hasChildItems: {
+    addMargin: {
       type: Boolean,
       default: false
     }
   },
   computed: {
     iconMargin() {
-      if (!this.isCollapsed) {
-        return ''
+      if (this.addMargin) {
+        return 'margin-left: -20px;'
       }
-      if (this.hasChildItems) {
-        return 'margin-left: -4px;'
-      }
-      return 'margin-left: 18px;'
     }
   }
 }

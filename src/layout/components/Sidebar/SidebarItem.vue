@@ -8,7 +8,14 @@
           :class="{'submenu-title-noDropdown':!isNest}"
           @click="openItemMenu"
         >
+          <el-tooltip v-if="!sidebar.opened && !isNest" effect="dark" :content="onlyOneChild.meta.title" placement="right">
+            <item
+              :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
+              :add-margin="true"
+            />
+          </el-tooltip>
           <item
+            v-else
             :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
             :title="generateTitle(onlyOneChild.meta.title)"
             :is-collapsed="isCollapsed"
@@ -20,12 +27,15 @@
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
         <item
-          v-if="item.meta"
+          v-if="sidebar.opened"
           :icon="item.meta && item.meta.icon"
           :title="generateTitle(item.meta.title)"
           :is-collapsed="isCollapsed"
           :has-child-items="true"
         />
+        <el-tooltip v-else effect="dark" :content="item.meta.title" placement="top-start">
+          <item v-if="item.meta && !isNest" :icon="item.meta && item.meta.icon" />
+        </el-tooltip>
       </template>
       <sidebar-item
         v-for="child in item.children"
