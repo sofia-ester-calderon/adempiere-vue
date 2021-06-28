@@ -42,11 +42,9 @@
 </template>
 
 <script>
-import { defineComponent, computed, ref } from '@vue/composition-api'
 
-export default defineComponent({
+export default {
   name: 'FilterFields',
-
   props: {
     containerUuid: {
       type: String,
@@ -61,66 +59,60 @@ export default defineComponent({
       default: 'window'
     }
   },
+  data() {
+    return {
+      selectedFields: [],
+      fieldsListOptional: []
+    }
+  },
 
-  setup(props, { root }) {
-    const isAdvancedQuery = props.panelType === 'table'
-
-    const isMobile = computed(() => {
-      root.$store.state.app.device === 'mobile'
-    })
-
-    const fieldsListOptional = computed(() => {
-      if (props.panelType === 'window' && !root.isEmptyValue(props.groupField)) {
-        // compare group fields to window
-        return root.$store.getters.getFieldsListNotMandatory({
-          containerUuid: props.containerUuid
+  computed: {
+    isAdvancedQuery() {
+      return this.panelType === 'table'
+    },
+    isMobile() {
+      return this.$store.state.app.device === 'mobile'
+    }
+  },
+  created: async function() {
+    let notMandatoryFields = this.$store.getters.getFieldsListNotMandatory({ containerUuid: this.containerUuid })
+    if (this.panelType === 'window' && !this.isEmptyValue(this.groupField)) {
+      // compare group fields to window
+      notMandatoryFields = notMandatoryFields
+        .filter(fieldItem => {
+          return fieldItem.groupAssigned === this.groupField
         })
-          .filter(fieldItem => {
-            return fieldItem.groupAssigned === props.groupField
-          })
-      }
-      // get fields not mandatory
-      return root.$store.getters.getFieldsListNotMandatory({
-        containerUuid: props.containerUuid
-      })
-    })
-
-    const getFieldSelected = computed(() => {
-      return fieldsListOptional.value
+    }
+    this.fieldsListOptional = notMandatoryFields
+    if (notMandatoryFields) {
+      this.selectedFields = notMandatoryFields
         .filter(fieldItem => {
           return fieldItem.isShowedFromUser
         })
         .map(itemField => {
           return itemField.columnName
         })
-    })
-
-    // fields optional showed
-    const selectedFields = ref(getFieldSelected.value)
-
-    /**
-     * @param {array} selectedValues
-     */
-    const addField = (selectedValues) => {
-      root.$store.dispatch('changeFieldShowedFromUser', {
-        containerUuid: props.containerUuid,
+    }
+  },
+  methods: {
+    addField(selectedValues) {
+      console.log('adding field: ', selectedValues)
+      this.$store.dispatch('changeFieldShowedFromUser', {
+        containerUuid: this.containerUuid,
         fieldsUser: selectedValues,
         show: true,
-        groupField: props.groupField,
-        isAdvancedQuery
+        groupField: this.groupField,
+        isAdvancedQuery: this.isAdvancedQuery
       })
-      selectedFields.value = selectedValues
-    }
-
-    return {
-      isMobile,
-      addField,
-      fieldsListOptional,
-      getFieldSelected,
-      selectedFields
+      this.selectedFields = selectedValues
+    },
+    getOptionText(item) {
+      if (item.isShowedFromUser) {
+        return 'YES - ' + item.name
+      } else return item.name
     }
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -179,16 +171,6 @@ export default defineComponent({
 
   .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
     content: "";
-  }
-
-  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::before {
-        position: absolute;
-    right: 20px;
-    font-family: "element-icons";
-    content: "";
-    font-size: 12px;
-    font-weight: bold;
-    -webkit-font-smoothing: antialiased;
   }
 }
 </style>
