@@ -35,6 +35,7 @@
           :key="key"
           :label="item.name"
           :value="item.columnName"
+          :style="getOptionMargin(item)"
         />
       </el-select>
     </el-form-item>
@@ -65,7 +66,6 @@ export default {
       fieldsListOptional: []
     }
   },
-
   computed: {
     isAdvancedQuery() {
       return this.panelType === 'table'
@@ -106,10 +106,10 @@ export default {
       })
       this.selectedFields = selectedValues
     },
-    getOptionText(item) {
-      if (item.isShowedFromUser) {
-        return 'YES - ' + item.name
-      } else return item.name
+    getOptionMargin(item) {
+      if (!item.isShowedFromUser) {
+        return "margin-left: 17px;"
+      }
     }
   }
 }
@@ -171,6 +171,11 @@ export default {
 
   .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
     content: "";
+  }
+
+  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected span::before {
+    content: "\2713";
+    margin-right: 5px;
   }
 }
 </style>
