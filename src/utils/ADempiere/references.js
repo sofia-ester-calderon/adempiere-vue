@@ -514,9 +514,9 @@ export const YES_NO = {
   size: {
     xs: 14,
     sm: 8,
-    md: 8,
-    lg: 3,
-    xl: 6
+    md: 6,
+    lg: 6,
+    xl: 4
   }
 }
 
@@ -624,6 +624,11 @@ export const COLUMNS_NAME_READ_ONLY = [
   COLUMN_IS_ACTIVE.columnName,
   COLUMN_PROCESSED.columnName,
   COLUMN_PROCESSING.columnName
+]
+
+export const COLUMNS_NAME_DOCUMENT_STATUS = [
+  'DocStatus',
+  'O_DocStatus'
 ]
 
 /**

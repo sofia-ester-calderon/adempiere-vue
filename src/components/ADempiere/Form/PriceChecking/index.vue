@@ -21,19 +21,21 @@
     style="height: 100% !important;"
     @click="focusProductValue"
   >
+
+    <img
+      fit="contain"
+      :src="backgroundForm"
+      class="background-price-checking"
+      style="z-index: 5;"
+    >
     <el-container style="height: 100% !important;">
-      <img
-        fit="contain"
-        :src="backgroundForm"
-        class="background-price-checking"
-        style="z-index: 2;"
-      >
       <el-main>
         <el-form
           key="form-loaded"
           class="inquiry-form"
           label-position="top"
           label-width="10px"
+          style="z-index: -1;"
           @submit.native.prevent="notSubmitForm"
         >
           <field
@@ -48,13 +50,11 @@
         </el-form>
 
         <div class="inquiry-product" style="z-index: 4;">
+          <div class="product-description">
+            <b> {{ productPrice.productName }} </b> <br> {{ productPrice.productDescription }}
+          </div>
           <el-row v-if="!isEmptyValue(productPrice)" :gutter="20">
-            <el-col style="padding-left: 0px; padding-right: 0%;">
-              <div class="product-description">
-                {{ productPrice.productName }} {{ productPrice.productDescription }}
-              </div>
-              <br><br><br>
-
+            <el-col :span="24" style="padding-left: 0px; padding-right: 0%;">
               <div class="product-price-base">
                 {{ $t('form.priceChecking.basePrice') }}
                 <span class="amount">
@@ -70,10 +70,9 @@
                 </span>
               </div>
               <br><br><br>
-
               <div class="product-price amount">
                 <span style="float: right;"> {{ formatPrice(productPrice.grandTotal, productPrice.currency.iSOCode) }} </span> <br>
-                {{ formatPrice(productPrice.schemaGrandTotal, productPrice.schemaCurrency.iSOCode) }}
+                <span v-if="!isEmptyValue(currentPointOfSales.displayCurrency) && !isEmptyValue(convertionsList)"> {{ formatPrice(productPrice.grandTotal / converted, currentPointOfSales.displayCurrency.iso_code) }}</span>
               </div>
             </el-col>
           </el-row>
@@ -83,6 +82,18 @@
             <el-col style="padding-left: 0px; padding-right: 0%;">
               <div class="product-price amount">
                 {{ $t('form.priceChecking.productNotFound') }}
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+        <div v-if="!isEmptyValue(productPrice) && !isEmptyValue(currentPointOfSales.displayCurrency) && !isEmptyValue(convertionsList)" class="inquiry-product" style="z-index: 4;">
+          <el-row>
+            <el-col>
+              <div v-if="!isEmptyValue(currentConvertion)" class="rate-date">
+                {{ $t('form.pos.collect.dayRate') }}: {{ formatQuantity(currentConvertion.multiplyRate) }} ~ ({{ formatPrice(1, productPrice.currency.iSOCode) }} = {{ formatPrice(currentConvertion.multiplyRate) }} {{ currentPointOfSales.displayCurrency.iso_code }})
+              </div>
+              <div v-else class="rate-date">
+                {{ $t('form.pos.collect.noDayRate') }} {{ currentPointOfSales.displayCurrency.description }}
               </div>
             </el-col>
           </el-row>
@@ -105,7 +116,7 @@
 import formMixin from '@/components/ADempiere/Form/formMixin.js'
 import fieldsList from './fieldsList.js'
 import { getProductPrice } from '@/api/ADempiere/form/price-checking.js'
-import { formatPercent, formatPrice } from '@/utils/ADempiere/valueFormat.js'
+import { formatPercent, formatPrice, formatQuantity } from '@/utils/ADempiere/valueFormat.js'
 import { getImagePath } from '@/utils/ADempiere/resource.js'
 
 export default {
@@ -133,8 +144,41 @@ export default {
     defaultImage() {
       return require('@/image/ADempiere/priceChecking/no-image.jpg')
     },
-    currentPoint() {
+    currentPointOfSales() {
       return this.$store.getters.posAttributes.currentPointOfSales
+    },
+    pointOfSalesList() {
+      return this.$store.getters.posAttributes.pointOfSalesList
+    },
+    convertionsList() {
+      return this.$store.state['pointOfSales/point/index'].conversionsList
+    },
+    currentConvertion() {
+      if (this.isEmptyValue(this.currentPointOfSales.displayCurrency)) {
+        return {}
+      }
+      const convert = this.convertionsList.find(convert => {
+        if (!this.isEmptyValue(convert.currencyTo) && !this.isEmptyValue(this.currentPointOfSales.displayCurrency) && convert.currencyTo.id === this.currentPointOfSales.displayCurrency.id) {
+          return convert
+        }
+      })
+      if (convert) {
+        return convert
+      }
+      return {}
+    },
+    converted() {
+      if (!this.isEmptyValue(this.convertionsList)) {
+        const convertion = this.convertionsList.find(convert => {
+          if (!this.isEmptyValue(convert.currencyTo) && !this.isEmptyValue(this.currentPointOfSales.displayCurrency) && convert.currencyTo.id === this.currentPointOfSales.displayCurrency.id) {
+            return convert
+          }
+        })
+        if (!this.isEmptyValue(convertion)) {
+          return convertion.divideRate
+        }
+      }
+      return 1
     }
   },
   created() {
@@ -143,12 +187,17 @@ export default {
   mounted() {
     this.backgroundForm = this.defaultImage
     this.getImageFromSource(this.organizationImagePath)
-    this.$store.dispatch('listPointOfSalesFromServer')
+    if (this.isEmptyValue(this.pointOfSalesList)) {
+      this.$store.dispatch('listPointOfSalesFromServer')
+    }
   },
   beforeDestroy() {
     this.unsubscribe()
   },
   methods: {
+    formatPercent,
+    formatPrice,
+    formatQuantity,
     focusProductValue() {
       if (!this.isEmptyValue(this.$refs.ProductValue[0])) {
         this.$refs.ProductValue[0].$children[0].$children[0].$children[1].$children[0].focus()
@@ -160,13 +209,20 @@ export default {
       }
       const image = getImagePath({
         file: fileName,
-        width: 250,
-        height: 280
+        width: 900,
+        height: 900
       })
       this.backgroundForm = image.uri
     },
-    formatPercent,
-    formatPrice,
+    amountConvert() {
+      if (!this.isEmptyValue(this.currentPointOfSales) && this.isEmptyValue(this.currentConvertion) && !this.isEmptyValue(this.currentPointOfSales.displayCurrency)) {
+        this.$store.dispatch('searchConversion', {
+          conversionTypeUuid: this.currentPointOfSales.conversionTypeUuid,
+          currencyFromUuid: this.currentPointOfSales.priceList.currency.uuid,
+          currencyToUuid: this.currentPointOfSales.displayCurrency.uuid
+        })
+      }
+    },
     subscribeChanges() {
       return this.$store.subscribe((mutation, state) => {
         if ((mutation.type === 'currentPointOfSales') || (mutation.type === 'setListProductPrice') || (mutation.type === 'addFocusLost')) {
@@ -178,7 +234,7 @@ export default {
           if (!this.isEmptyValue(this.search) && this.search.length >= 4) {
             getProductPrice({
               searchValue: mutation.payload.value,
-              priceListUuid: this.currentPoint.priceList.uuid
+              posUuid: this.currentPointOfSales.uuid
             })
               .then(productPrice => {
                 this.messageError = true
@@ -191,16 +247,11 @@ export default {
                   image,
                   grandTotal: this.getGrandTotal(priceBase, rate),
                   productName: product.name,
-                  productDescription: product.description,
+                  productDescription: product.help,
                   priceBase,
                   priceStandard: productPrice.priceStandard,
                   priceList: productPrice.priceList,
                   priceLimit: productPrice.priceLimit,
-                  schemaCurrency: productPrice.schemaCurrency,
-                  schemaGrandTotal: this.getGrandTotal(productPrice.schemaPriceStandard, rate),
-                  schemaPriceStandard: productPrice.schemaPriceStandard,
-                  schemaPriceList: productPrice.schemaPriceList,
-                  schemaPriceLimit: productPrice.schemaPriceLimit,
                   taxRate: rate,
                   taxName: taxRate.name,
                   taxIndicator: taxRate.taxIndicator,
@@ -214,6 +265,7 @@ export default {
                 this.productPrice = {}
               })
               .finally(() => {
+                this.amountConvert()
                 this.$store.commit('updateValueOfField', {
                   containerUuid: this.containerUuid,
                   columnName: 'ProductValue',
@@ -235,7 +287,7 @@ export default {
             }
             getProductPrice({
               searchValue: mutation.payload.value,
-              priceListUuid: this.currentPoint.priceList.uuid
+              posUuid: this.currentPointOfSales.uuid
             })
               .then(productPrice => {
                 this.messageError = true
@@ -253,7 +305,6 @@ export default {
                   priceList: productPrice.priceList,
                   priceLimit: productPrice.priceLimit,
                   schemaCurrency: productPrice.schemaCurrency,
-                  schemaGrandTotal: this.getGrandTotal(productPrice.schemaPriceStandard, rate),
                   schemaPriceStandard: productPrice.schemaPriceStandard,
                   schemaPriceList: productPrice.schemaPriceList,
                   schemaPriceLimit: productPrice.schemaPriceLimit,
@@ -269,6 +320,7 @@ export default {
                 this.productPrice = {}
               })
               .finally(() => {
+                this.amountConvert()
                 this.$store.commit('updateValueOfField', {
                   containerUuid: this.containerUuid,
                   columnName: 'ProductValue',
@@ -322,7 +374,9 @@ export default {
     color: #32363a;
     font-size: 30px;
     float: right;
-    padding-bottom: 0px;
+    padding-bottom: 1%;
+    text-align: end;
+
   }
   .product-price-base, .product-tax {
     font-size: 30px;
@@ -333,7 +387,14 @@ export default {
     font-size: 50px;
     float: right;
   }
-
+  .rate-date {
+    padding-top: 30%;
+    font-size: 50px;
+    float: right;
+    color: black;
+    font-weight: bold;
+    text-align: end;
+  }
   .inquiry-form {
     position: absolute;
     right: 5%;
@@ -343,8 +404,7 @@ export default {
   }
   .inquiry-product {
     position: absolute;
-    right: 20%;
-    width: 100%;
+    right: 10%;
     top: 33%;
     .amount {
       color: black;

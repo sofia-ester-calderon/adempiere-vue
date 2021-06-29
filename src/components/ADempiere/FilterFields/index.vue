@@ -17,39 +17,35 @@
 -->
 
 <template>
-  <el-form class="form-filter-fields">
-    <el-row>
-      <el-col :span="columns.label">
-        <span class="form-filter-label">{{ $t('components.filterableItems') }}</span>
-      </el-col>
-      <el-col :span="columns.select">
-        <el-form-item>
-          <el-select
-            v-model="selectedFields"
-            :filterable="!isMobile"
-            :placeholder="$t('components.filterableItems')"
-            multiple
-            collapse-tags
-            value-key="key"
-            :popper-append-to-body="false"
-            class="form-filter-select"
-            @change="addField"
-          >
-            <el-option
-              v-for="(item, key) in fieldsListOptional"
-              :key="key"
-              :label="item.name"
-              :value="item.columnName"
-              :style="getOptionMargin(item)"
-            />
-          </el-select>
-        </el-form-item>
-      </el-col>
-    </el-row>
+  <el-form :class="cssClass" style="float: right;">
+    <el-form-item>
+      <template v-if="!isEmptyValue(groupField)" slot="label">
+        {{ groupField }}
+      </template>
+
+      <el-select
+        v-model="fieldsListShowed"
+        :filterable="!isMobile"
+        :placeholder="$t('components.filterableItems')"
+        multiple
+        collapse-tags
+        value-key="key"
+        :size="size"
+        :popper-append-to-body="true"
+      >
+        <el-option
+          v-for="(item, key) in fieldsListAvailable"
+          :key="key"
+          :label="item.name"
+          :value="item.columnName"
+        />
+      </el-select>
+    </el-form-item>
   </el-form>
 </template>
 
 <script>
+import { defineComponent, computed } from '@vue/composition-api'
 
 export default {
   name: 'FilterFields',
@@ -65,70 +61,112 @@ export default {
     panelType: {
       type: String,
       default: 'window'
-    }
-  },
-  data() {
-    return {
-      selectedFields: [],
-      fieldsListOptional: []
-    }
-  },
-  computed: {
-    isAdvancedQuery() {
-      return this.panelType === 'table'
     },
-    isMobile() {
-      return this.$store.state.app.device === 'mobile'
-    },
-    columns() {
-      if (this.isMobile) {
-        return {
-          label: 24,
-          select: 24
-        }
-      }
-      return {
-        label: 7,
-        select: 17
-      }
+    /**
+     * If is used in table, by default false
+     */
+    inTable: {
+      type: Boolean,
+      default: false
     }
   },
-  created: async function() {
-    let notMandatoryFields = this.$store.getters.getFieldsListNotMandatory({ containerUuid: this.containerUuid })
-    if (this.panelType === 'window' && !this.isEmptyValue(this.groupField)) {
-      // compare group fields to window
-      notMandatoryFields = notMandatoryFields
-        .filter(fieldItem => {
-          return fieldItem.groupAssigned === this.groupField
+
+  setup(props, { root }) {
+    const isAdvancedQuery = props.panelType === 'table'
+
+    const size = props.inTable
+      ? 'mini'
+      : 'small'
+
+    const cssClass = props.inTable
+      ? 'form-filter-columns'
+      : 'form-filter-fields'
+
+    const showedAttibute = props.inTable
+      ? 'isShowedTableFromUser'
+      : 'isShowedFromUser'
+
+    const isMobile = computed(() => {
+      root.$store.state.app.device === 'mobile'
+    })
+
+    const fieldsListAvailable = computed(() => {
+      if (!props.inTable && props.panelType === 'window' && !root.isEmptyValue(props.groupField)) {
+        // compare group fields to window
+        return root.$store.getters.getFieldsListNotMandatory({
+          containerUuid: props.containerUuid
         })
-    }
-    notMandatoryFields.sort((a,b) => (a.sequence > b.sequence) ? 1 : ((b.sequence > a.sequence) ? -1 : 0))
-    this.fieldsListOptional = notMandatoryFields
-    if (notMandatoryFields) {
-      this.selectedFields = notMandatoryFields
-        .filter(fieldItem => {
-          return fieldItem.isShowedFromUser
-        })
-        .map(itemField => {
+          .filter(fieldItem => {
+            return fieldItem.groupAssigned === props.groupField
+          })
+      }
+      // get fields not mandatory
+      return root.$store.getters.getFieldsListNotMandatory({
+        containerUuid: props.containerUuid,
+        isTable: props.inTable
+      })
+    })
+
+    // fields showed
+    const fieldsListShowed = computed({
+      get() {
+        return fieldsListAvailable.value.filter(itemField => {
+          return itemField[showedAttibute]
+        }).map(itemField => {
           return itemField.columnName
         })
+      },
+      set(selecteds) {
+        // set columns to show/hidden in vuex store
+        changeShowed(selecteds)
+      }
+    })
+
+    const changeShowed = (selectedValues) => {
+      if (props.inTable) {
+        return changeShowedTable(selectedValues)
+      }
+      return changeShowedPanel(selectedValues)
     }
-  },
-  methods: {
-    addField(selectedValues) {
-      this.$store.dispatch('changeFieldShowedFromUser', {
-        containerUuid: this.containerUuid,
+
+    /**
+     * Set fields to hidden/showed in panel
+     * if is advanced query or browser panel with values or null/not null
+     * operator, dispatch search
+     * @param {array} selectedValues
+     */
+    const changeShowedPanel = (selectedValues) => {
+      root.$store.dispatch('changeFieldShowedFromUser', {
+        containerUuid: props.containerUuid,
         fieldsUser: selectedValues,
         show: true,
         groupField: this.groupField,
         isAdvancedQuery: this.isAdvancedQuery
       })
-      this.selectedFields = selectedValues
-    },
-    getOptionMargin(item) {
-      if (!item.isShowedFromUser) {
-        return 'margin-left: 17px;'
-      }
+    }
+
+    /**
+     * Set columns to hidden/showed in table
+     * @param {array} selectedValues
+     */
+    const changeShowedTable = (selectedValues) => {
+      root.$store.dispatch('changeFieldAttributesBoolean', {
+        containerUuid: props.containerUuid,
+        fieldsIncludes: selectedValues,
+        attribute: 'isShowedTableFromUser',
+        valueAttribute: true
+      })
+    }
+
+    return {
+      cssClass,
+      // computeds
+      isMobile,
+      size,
+      fieldsListShowed,
+      fieldsListAvailable,
+      // methods
+      changeShowed
     }
   }
 }
@@ -142,21 +180,14 @@ export default {
     margin-right: 0px !important;
   }
 }
+
+.form-filter-columns {
+  margin: 0px;
+}
 </style>
 <style lang="scss">
+
 .form-filter-fields {
-  margin-top: 10px;
-  margin-bottom: 10px;
-
-  .form-filter-select {
-    width: 100%;
-  }
-
-  .form-filter-label {
-    font-size: 13px;
-    font-weight: 300;
-  }
-
   .el-tag--small {
     max-width: 132px !important;
   }
@@ -207,4 +238,5 @@ export default {
     left: 0 !important;
   }
 }
+
 </style>
