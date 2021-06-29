@@ -29,6 +29,7 @@
         value-key="key"
         :popper-append-to-body="false"
         @change="addField"
+        class="form-filter-select"
       >
         <el-option
           v-for="(item, key) in fieldsListOptional"
@@ -126,8 +127,12 @@ export default {
 </style>
 <style lang="scss">
 .form-filter-fields {
-  // position
-  float: right;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  .form-filter-select {
+    width: 100%;
+  }
 
   .el-tag--small {
     max-width: 132px !important;
@@ -176,6 +181,11 @@ export default {
   .el-select-dropdown.is-multiple .el-select-dropdown__item.selected span::before {
     content: "\2713";
     margin-right: 5px;
+  }
+
+  .el-select-dropdown.is-multiple {
+    width: 100%;
+    left: 0 !important;
   }
 }
 </style>
