@@ -33,7 +33,7 @@
               || (groupTab.groupType !== 'T' && firstGroup.typeGroup !== 'T')"
             class="card"
           >
-            <div class="select-filter">
+            <div class="select-filter" style="'width: 100%'">
               <span>
                 {{ firstGroup.groupFinal }}
               </span>

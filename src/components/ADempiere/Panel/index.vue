@@ -81,7 +81,6 @@ export default {
 
 <style>
   .select-filter {
-    width: 280px !important;
     float: right;
     top: 0;
   }

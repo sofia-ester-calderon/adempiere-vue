@@ -18,28 +18,34 @@
 
 <template>
   <el-form class="form-filter-fields">
-    <!-- <el-form-item :label="groupField"> -->
-    <el-form-item>
-      <el-select
-        v-model="selectedFields"
-        :filterable="!isMobile"
-        :placeholder="$t('components.filterableItems')"
-        multiple
-        collapse-tags
-        value-key="key"
-        :popper-append-to-body="false"
-        @change="addField"
-        class="form-filter-select"
-      >
-        <el-option
-          v-for="(item, key) in fieldsListOptional"
-          :key="key"
-          :label="item.name"
-          :value="item.columnName"
-          :style="getOptionMargin(item)"
-        />
-      </el-select>
-    </el-form-item>
+    <el-row>
+      <el-col :span="columns.label">
+        <span class="form-filter-label">{{ $t('components.filterableItems') }}</span>
+      </el-col>
+      <el-col :span="columns.select">
+        <el-form-item>
+          <el-select
+            v-model="selectedFields"
+            :filterable="!isMobile"
+            :placeholder="$t('components.filterableItems')"
+            multiple
+            collapse-tags
+            value-key="key"
+            :popper-append-to-body="false"
+            class="form-filter-select"
+            @change="addField"
+          >
+            <el-option
+              v-for="(item, key) in fieldsListOptional"
+              :key="key"
+              :label="item.name"
+              :value="item.columnName"
+              :style="getOptionMargin(item)"
+            />
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
   </el-form>
 </template>
 
@@ -73,6 +79,18 @@ export default {
     },
     isMobile() {
       return this.$store.state.app.device === 'mobile'
+    },
+    columns() {
+      if (this.isMobile) {
+        return {
+          label: 24,
+          select: 24
+        }
+      }
+      return {
+        label: 7,
+        select: 17
+      }
     }
   },
   created: async function() {
@@ -109,7 +127,7 @@ export default {
     },
     getOptionMargin(item) {
       if (!item.isShowedFromUser) {
-        return "margin-left: 17px;"
+        return 'margin-left: 17px;'
       }
     }
   }
@@ -132,6 +150,11 @@ export default {
 
   .form-filter-select {
     width: 100%;
+  }
+
+  .form-filter-label {
+    font-size: 13px;
+    font-weight: 300;
   }
 
   .el-tag--small {
@@ -164,11 +187,7 @@ export default {
   // icon X close tag
   .el-select i.el-tag__close {
     &.el-tag__close {
-      // left: 58%;
-      // margin-top: 0px !important;
-      // top: 0 !important;
       color: #FFF !important;
-      // position: absolute !important;
       position: relative !important;
       top: -7 !important;
     }
