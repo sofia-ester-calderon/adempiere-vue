@@ -102,6 +102,7 @@ export default {
           return fieldItem.groupAssigned === this.groupField
         })
     }
+    notMandatoryFields.sort((a,b) => (a.sequence > b.sequence) ? 1 : ((b.sequence > a.sequence) ? -1 : 0))
     this.fieldsListOptional = notMandatoryFields
     if (notMandatoryFields) {
       this.selectedFields = notMandatoryFields
@@ -115,7 +116,6 @@ export default {
   },
   methods: {
     addField(selectedValues) {
-      console.log('adding field: ', selectedValues)
       this.$store.dispatch('changeFieldShowedFromUser', {
         containerUuid: this.containerUuid,
         fieldsUser: selectedValues,
