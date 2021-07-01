@@ -17,7 +17,7 @@
 -->
 
 <template>
-  <el-form :class="cssClass" style="float: right;">
+  <el-form :class="cssClass" :style="styles.form">
     <el-form-item>
       <template v-if="!isEmptyValue(groupField)" slot="label">
         {{ groupField }}
@@ -32,6 +32,7 @@
         value-key="key"
         :size="size"
         :popper-append-to-body="true"
+        :style="styles.select"
       >
         <el-option
           v-for="(item, key) in fieldsListAvailable"
@@ -86,6 +87,16 @@ export default defineComponent({
     const showedAttibute = props.inTable
       ? 'isShowedTableFromUser'
       : 'isShowedFromUser'
+
+    const styles = screen.width < 450
+     ? {
+          form: 'float: right; width: 100%;',
+          select: 'display: block'
+        }
+      :
+       {
+        form: 'float: right;',
+      } 
 
     const isMobile = computed(() => {
       root.$store.state.app.device === 'mobile'
@@ -166,6 +177,7 @@ export default defineComponent({
       size,
       fieldsListShowed,
       fieldsListAvailable,
+      styles,
       // methods
       changeShowed
     }
