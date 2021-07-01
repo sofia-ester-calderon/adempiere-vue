@@ -187,47 +187,10 @@ export default defineComponent({
 }
 </style>
 <style lang="scss">
-/*
-.form-filter-fields {
-  .el-tag--small {
-    max-width: 132px !important;
+  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
+    position: static;
+    float: right;
+    margin-left: 5px;
   }
 
-  // text tag
-  .el-tag {
-    &.el-tag--info {
-      &.el-tag--small {
-        &.el-tag--light  {
-          // max-width: calc(100% - 10px);
-          &:first-child {
-            .el-select__tags-text {
-              max-width: calc(100% - 15px);
-            }
-          }
-        }
-      }
-    }
-  }
-  .el-select__tags-text {
-    width: 100%;
-    overflow: hidden !important;
-    white-space: nowrap;
-    text-overflow: ellipsis !important; // ... end text
-    display: inline-block;
-  }
-
-  // icon X close tag
-  .el-select i.el-tag__close {
-    &.el-tag__close {
-      // left: 58%;
-      // margin-top: 0px !important;
-      // top: 0 !important;
-      color: #FFF !important;
-      // position: absolute !important;
-      position: relative !important;
-      top: -7 !important;
-    }
-  }
-}
-*/
 </style>
