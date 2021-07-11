@@ -89,14 +89,13 @@ export default defineComponent({
       : 'isShowedFromUser'
 
     const styles = screen.width < 450
-     ? {
-          form: 'float: right; width: 100%;',
-          select: 'display: block'
-        }
-      :
-       {
-        form: 'float: right;',
-      } 
+      ? {
+        form: 'float: right; width: 100%;',
+        select: 'display: block'
+      }
+      : {
+        form: 'float: right;'
+      }
 
     const isMobile = computed(() => {
       root.$store.state.app.device === 'mobile'
